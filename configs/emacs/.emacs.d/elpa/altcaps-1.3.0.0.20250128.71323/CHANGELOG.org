@@ -1,0 +1,189 @@
+#+title: Change log of aLtCaPs
+#+author: Protesilaos Stavrou
+#+email: info@protesilaos.com
+#+options: ':nil toc:nil num:nil author:nil email:nil
+
+This document contains the release notes for each tagged commit on the
+project's main git repository: <https://github.com/protesilaos/altcaps>.
+
+The newest release is at the top.  For further details, please consult
+the manual: <https://protesilaos.com/emacs/altcaps>.
+
+* 1.3.0 on 2025-01-28
+:PROPERTIES:
+:CUSTOM_ID: h:20f36910-7ef8-4e39-954d-3ef599a08b21
+:END:
+
+This version does not include any user-facing changes. I made some
+internal refinements and ensured everything works as expected. Just
+use the sample configuration to get started:
+
+#+begin_src emacs-lisp
+(use-package altcaps
+  :ensure t
+  :bind
+  ("C-x C-a" . altcaps-dwim)
+  :config
+  ;; Optionally force letter casing for certain characters (for legibility).
+  (setq altcaps-force-character-casing
+      '(("i" . downcase)
+        ("l" . upcase))))
+#+end_src
+
+* 1.2.0 on 2023-09-22
+:PROPERTIES:
+:CUSTOM_ID: h:f6bf4cd9-0942-4536-92bc-6117cd5d57d9
+:END:
+
+** Breaking change to the value of ~altcaps-force-character-casing~
+:PROPERTIES:
+:CUSTOM_ID: h:3154e7c8-cb91-496c-8f45-f9103761af7f
+:END:
+
+This user option enforces the specified letter casing for the given
+character.  The value is an alist.  In previous versions, the ~car~ of
+each cell was a character type, whereas now it is a string type.
+Concretely, the old value was expressed like this:
+
+#+begin_src emacs-lisp
+;; Old value
+(setq altcaps-force-character-casing
+      '((?i . downcase)
+        (?l . upcase)))
+#+end_src
+
+It becomes:
+
+#+begin_src emacs-lisp
+;; New value
+(setq altcaps-force-character-casing
+      '(("i" . downcase)
+        ("l" . upcase)))
+#+end_src
+
+At least based on my correspondence, strings are easier for users.
+The notation for characters causes confusion.
+
+** The public ~altcaps-transform~ function
+:PROPERTIES:
+:CUSTOM_ID: h:8b4aabf6-3ecb-46c5-ab28-49518e5add31
+:END:
+
+This is the function that performs the alternating letter casing, while
+also respecting the user option ~altcaps-force-character-casing~.  The
+function is more efficient now.  Use it in Lisp with a single string
+argument, like this:
+
+#+begin_src emacs-lisp
+(altcaps-transform "Your wish is my command")
+;; => yOuR wIsH iS mY cOmMaNd
+#+end_src
+
+The above return value is consistent with the default settings.  With
+~altcaps-force-character-casing~ bound, we can affect the output thus:
+
+#+begin_src emacs-lisp
+(setq altcaps-force-character-casing
+      '(("i" . downcase)
+        ("m" . upcase)))
+
+(altcaps-transform "Your wish is my command")
+;; => yOuR wiSh iS My CoMMaNd
+#+end_src
+
+** Characters without casing no longer matter
+:PROPERTIES:
+:CUSTOM_ID: h:574bbf0f-05e2-4d6c-8141-02043fb5d8f1
+:END:
+
+Before, the algorithm was toggling the letter casing of virtually
+every character.  This means that a string like ="a.c"= was wrongly
+treated as a sequence of three characters with letter casing, so the
+program was trying to do this:
+
+#+begin_src
+a => downcase
+. => upcase
+c => downcase
+#+end_src
+
+Whereas now, the transformation skips characters without letter
+casing:
+
+#+begin_src
+a => downcase
+. => i Am ThE iNtElLiGeNtSiA nOw
+c => upcase
+#+end_src
+
+** The ~altcaps-replace~ is superseded by ~altcaps-replace-region~
+:PROPERTIES:
+:CUSTOM_ID: h:712e32d5-9b9a-4eeb-b406-a2df59d00b51
+:END:
+
+The ~altcaps-replace~ was not sufficiently abstract, making the code a
+bit repetitive.  The new ~altcaps-replace-region~ is efficient in that
+regard.
+
+The arity of the two functions is different: ~altcaps-replace~ was
+accepting one required argument plus an optional one, while
+~altcaps-replace-region~ takes three arguments at all times.  Please
+consult its doc string before adapting it to your code.
+
+* 1.1.0 on 2022-11-28
+:PROPERTIES:
+:CUSTOM_ID: h:f1e70ccd-ad8d-44ee-a061-006f63ec07ef
+:END:
+
+** New user option
+:PROPERTIES:
+:CUSTOM_ID: h:21b37c23-b4ad-4531-ac20-2ddcce74d26f
+:END:
+
+Introduced the user option ~altcaps-force-character-casing~.  It
+forces the given letter casing for specified characters.  Its value is
+an alist of =(CHARACTER . CASE)= pairs.  =CHARACTER= is a single
+character (satisfies the ~characterp~ condition), while =CASE= is the
+~upcase~ or ~downcase~ symbol (code sample further below).
+
+The idea is to always render certain characters in lower or upper
+case, in consideration of their legibility in context.  For example,
+the default altcaps algorithm produces this:
+
+: iLlIcIt IlLiBeRaL sIlLiNeSs
+
+Whereas if the value of this variable declares =i= to always be
+lowercase and =L= uppercase, then we get this:
+
+: iLLiCiT iLLiBeRaL siLLiNeSs
+
+The code to do this:
+
+#+begin_src emacs-lisp
+(setq altcaps-force-character-casing
+      '((?i . downcase)
+        (?l . upcase)))
+#+end_src
+
+Thanks to Cédric Barreteau for the idea of forcing a given letter case
+on specified characters.  I think that giving users the option keeps
+our code simple, while providing a useful point of customisation.
+
+Cédric is the author of the nvim-altcaps, which is a plugin for NeoVim
+based on my =altcaps= idea: <https://github.com/cbarrete/nvim-altcaps>.
+
+** Improvements to documentation
+:PROPERTIES:
+:CUSTOM_ID: h:87713c33-c2d8-4d33-912e-8fd1cd54a58c
+:END:
+
++ Wrote a =README.md= which contains basic information about the
+  project, including links to the official Git repos, its mirrors on
+  GitHub/GitLab, as well as the project's mailing list.  This file is
+  useful for Git forges that have trouble parsing an Org file (the
+  manual is =README.org=, which the GNU ELPA machinery converts into a
+  proper Info manual).
++ Added missing index entries to the manual for our commands and the
+  new user option.
++ Wrote this very =CHANGELOG.org=, which is helpful for those who
+  inspect the Git repository.

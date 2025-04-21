@@ -1,8 +1,8 @@
 #!/bin/sh
-export LD_LIBRARY_PATH=$LIBRARY_PATH
-RUNNER=$(find ~/.guix-profile/lib/ -name 'ld-linux-*.so*')
+  export LD_LIBRARY_PATH=$LIBRARY_PATH
+  RUNNER=$(find ~/.guix-profile/lib/ -name 'ld-linux-*.so*')
 
-$RUNNER "$@" #!/bin/sh
+  $RUNNER "$@" #!/bin/sh
 
-export LD_LIBRARY_PATH=$LIBRARY_PATH
-RUNNER
+  export LD_LIBRARY_PATH=$LIBRARY_PATH
+  RUNNER

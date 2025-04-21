@@ -1,53 +1,53 @@
-general {
-output_format = "i3bar"
-colors = true
-color_good = "#a3be8c"
-color_degraded = "#ebcb8b"
-color_bad = "#bf616a"
-interval = 1
-}
+  general {
+  output_format = "i3bar"
+  colors = true
+  color_good = "#a3be8c"
+  color_degraded = "#ebcb8b"
+  color_bad = "#bf616a"
+  interval = 1
+  }
 
-order += "ethernet _first_"
-order += separator
-order += "volume master"
-order += separator
-order += "tztime local"
+  order += "ethernet _first_"
+  order += separator
+  order += "volume master"
+  order += separator
+  order += "tztime local"
 
-volume master {
-format = "|| 🔊 %volume"
-format_muted = "|| 🔇 (%volume)"
-device = "default"
-mixer = "Master"
-}
+  volume master {
+  format = "|| 🔊 %volume"
+  format_muted = "|| 🔇 (%volume)"
+  device = "default"
+  mixer = "Master"
+  }
 
-wireless _first_ {
-format_up = "W: (%quality at %essid) %ip"
-format_down = "W: down"
-}
+  wireless _first_ {
+  format_up = "W: (%quality at %essid) %ip"
+  format_down = "W: down"
+  }
 
-ethernet _first_ {
-format_up = "🌏 %ip"
-format_down = "🚫 net down"
-}
+  ethernet _first_ {
+  format_up = "🌏 %ip"
+  format_down = "🚫 net down"
+  }
 
-battery all {
-format = "%status %percentage %remaining"
-}
+  battery all {
+  format = "%status %percentage %remaining"
+  }
 
-disk "/" {
-format = "%avail"
-}
+  disk "/" {
+  format = "%avail"
+  }
 
-load {
-format = "%1min"
-}
+  load {
+  format = "%1min"
+  }
 
-memory {
-format = "%used | %available"
-threshold_degraded = "1G"
-format_degraded = "MEMORY < %available"
-}
+  memory {
+  format = "%used | %available"
+  threshold_degraded = "1G"
+  format_degraded = "MEMORY < %available"
+  }
 
-tztime local {
-format = "|| 🗓️ %H:%M %d.%m.%Y"
-}
+  tztime local {
+  format = "|| 🗓️ %H:%M %d.%m.%Y"
+  }

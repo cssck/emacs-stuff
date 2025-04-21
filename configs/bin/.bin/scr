@@ -1,2 +1,2 @@
 #!/bin/sh
-grim - | wl-copy
+  grim - | wl-copy

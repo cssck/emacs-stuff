@@ -1,0 +1,313 @@
+#+title: Change log of cursory.el
+#+author: Protesilaos Stavrou
+#+email: info@protesilaos.com
+#+language: en
+#+options: ':t toc:nil author:t email:t num:t
+#+startup: content
+
+This document contains the release notes for each tagged commit on the
+project's main git repository: <https://github.com/protesilaos/cursory>.
+
+The newest release is at the top.  For further details, please consult
+the manual: <https://protesilaos.com/emacs/cursory>.
+
+#+toc: headlines 1 insert TOC here, with one headline level
+
+* Version 1.1.0 on 2024-09-14
+:PROPERTIES:
+:CUSTOM_ID: h:475f025a-fa3d-4709-884f-bd0b32dc78cc
+:END:
+
+Cursory is in a stable state. This version includes quality-of-life
+refinements.
+
+** The ~cursory-mode~ simplifies how the state is stored
+:PROPERTIES:
+:CUSTOM_ID: h:d2ccd7ea-2379-40d2-b329-3e5d6ab2686c
+:END:
+
+Cursory has functions to store and restore its state. In previous
+versions, we would document how to use those by adding them to the
+relevant hooks. This approach still works, though we now provide an
+easier way to achieve the same result: just enable the ~cursory-mode~.
+
+Technically, all this does is to set the hooks if enabled, and unsets
+them if disabled.
+
+The "restore" phase is the same as before. For example:
+
+#+begin_src emacs-lisp
+;; Set last preset, if available, or fall back to the `bar' preset
+;; from the `cursory-presets'.
+(cursory-set-preset (or (cursory-restore-latest-preset) 'bar))
+#+end_src
+
+** Use the ~cursory-set-preset-hook~
+:PROPERTIES:
+:CUSTOM_ID: h:d60030aa-cfa2-4d94-9757-bbd783cbb7fd
+:END:
+
+The ~cursory-set-preset-hook~ is a normal hook (where functions are
+invoked without any arguments), which is called after the command
+~cursory-set-preset~. Here are some ideas on how to use it:
+
+#+begin_src emacs-lisp
+;; Imagine you have a preset where you want minimal cursor styles.
+;; You call this `focus' and want when you switch to it to change the
+;; cursor color.
+(defun my-cursory-change-color ()
+"Change to a subtle color when the `focus' Cursory preset is selected."
+  (if (eq cursory-last-selected-preset 'focus)
+      (set-face-background 'cursor "#999999")
+    (face-spec-recalc 'cursor nil)))
+
+;; Here we just show how to disable a given mode.  Of course, we can
+;; have something more sophisticated, which stores the last value and
+;; restores it if the condition we are testing for here is not met.
+;; Keeping it simple for now.
+(defun my-cursory-change-color-disable-line-numbers ()
+  "Disable line numbers if the Cursory preset is `presentation' or `focus'."
+  (when (member cursory-last-selected-preset '(presentation focus))
+    (display-line-numbers-mode -1)))
+#+end_src
+
+I am happy to include more examples here, if users have any questions.
+
+** Miscellaneous
+:PROPERTIES:
+:CUSTOM_ID: h:c7233f22-1610-430c-a60a-1cd9168ae624
+:END:
+
+- Fixed a dependency for older Emacs versions. The ~subr-x~, which is
+  built into Emacs, needs to be explicitly loaded at compile time.
+  This makes some parts of the code work as expected. Thanks to Mehdi
+  Khawari for reporting the problem and Nicholas Vollmer for
+  suggesting this change. The exchange took place in issue 1:
+  <https://github.com/protesilaos/cursory/issues/1>. Users should
+  already have this change, as I published a minor release for it
+  (version =1.0.1=).
+
+- Added some missing metadata to the manual. This is useful for the
+  indices and COPYING section.
+
+- Updated the relevant links to the package sources. The main
+  repository is now on GitHub.
+
+* Version 1.0.0 on 2023-06-09
+:PROPERTIES:
+:CUSTOM_ID: h:9fed228e-cde0-4d23-952a-937301b82b22
+:END:
+
+Cursory has been in a stable state for a long time.  I use it daily
+and am happy with what it does.  This version refactors parts of the
+code in the interest of legibility/hackability, while providing a
+quality-of-life feature for users.
+
+** A preset can now inherit from another
+:PROPERTIES:
+:CUSTOM_ID: h:d559a5c7-dfec-40f6-9b48-160424de2fed
+:END:
+
+In the interest of defining multiple presets while avoiding
+duplication, the user option ~cursory-presets~ now accepts an
+=:inherit= property.  For example:
+
+#+begin_src emacs-lisp
+(setq cursory-presets
+      '(
+        ;; Sample code here ...
+
+        (bar
+         :cursor-type (bar . 2)
+         :cursor-in-non-selected-windows hollow
+         :blink-cursor-mode 1
+         :blink-cursor-blinks 10
+         :blink-cursor-interval 0.5
+         :blink-cursor-delay 0.2)
+
+        (bar-no-other-window
+         :inherit bar
+         :cursor-in-non-selected-windows nil)
+
+        ;; More sample code here ...
+        ))
+#+end_src
+
+Presets were already capable of getting properties from a default =t=
+preset.  Now they can be controlled with greater precision.
+
+The value of ~cursory-presets~ is updated accordingly to benefit from
+this mechanism and to showcase how it is done:
+
+#+begin_src emacs-lisp
+(defcustom cursory-presets
+  '((box
+     :blink-cursor-interval 0.8)
+    (box-no-blink
+     :blink-cursor-mode -1)
+    (bar
+     :cursor-type (bar . 2)
+     :blink-cursor-interval 0.5)
+    (bar-no-other-window
+     :inherit bar
+     :cursor-in-non-selected-windows nil)
+    (underscore
+     :cursor-type (hbar . 3)
+     :blink-cursor-blinks 50)
+    (underscore-thin-other-window
+     :inherit underscore
+     :cursor-in-non-selected-windows (hbar . 1))
+    (t ; the default values
+     :cursor-type box
+     :cursor-in-non-selected-windows hollow
+     :blink-cursor-mode 1
+     :blink-cursor-blinks 10
+     :blink-cursor-interval 0.2
+     :blink-cursor-delay 0.2))
+  ;; Omitting the doc string for demo purposes...
+  )
+#+end_src
+
+In the above sample, we notice both the =:inherit= property and the
+default =t= preset with all its properties.  Presets beside =t= act as
+overrides of the defaults and, as such, need only consist of the
+properties that change from the default.  In the case of an
+=:inherit=, properties are first taken from the inherited preset and
+then the default one.
+
+* Version 0.3.0 on 2022-09-04
+:PROPERTIES:
+:CUSTOM_ID: h:ca7dd1d2-f32c-4141-b9bb-9493457dd4e1
+:END:
+
++ Implemented a mechanism to read fallback values for the presets
+  specified in the user option ~cursory-presets~.  In practical terms,
+  there can now be a =t= preset which holds the default values.  Any
+  other named preset overrides the =t=, so it only needs to specify the
+  properties that differ from the defaults.  Sample using the original
+  value:
+
+  #+begin_src emacs-lisp
+  (setq cursory-presets
+        '((box
+           :blink-cursor-interval 0.8)
+          (box-no-blink
+           :blink-cursor-mode -1)
+          (bar
+           :cursor-type (bar . 2)
+           :blink-cursor-interval 0.5)
+          (underscore
+           :cursor-type (hbar . 3)
+           :blink-cursor-blinks 50)
+          (t ; the default values
+           :cursor-type box
+           :cursor-in-non-selected-windows hollow
+           :blink-cursor-mode 1
+           :blink-cursor-blinks 10
+           :blink-cursor-interval 0.2
+           :blink-cursor-delay 0.2)))
+  #+end_src
+
++ Expanded the available properties of the user option ~cursory-presets~
+  to accept a value for the =:blink-cursor-mode= key (as seen in the
+  above code block).  It is either =1= or =-1= and is passed to the
+  function ~blink-cursor-mode~.  The former value enables the mode, the
+  latter disables it.  This lets ~cursory-presets~ set the
+  ~blink-cursor-mode~ per stylistic variant.
+
++ Refined the default value of the minibuffer prompt that is used by the
+  command ~cursory-set-preset~.  The default value now is the previous
+  element in the history, if it exists.  This makes it easier to toggle
+  between the last two choices (select the default value simply by
+  pressing =RET= without any further input).
+
++ Specified a =:package-version= for all user options.  The user is
+  informed in relevant Help buffers about the last version that
+  introduced or iterated on the variable.
+
++ The =cursory= group now references the Info manual that ships with the
+  GNU ELPA package.  A link is shown in Custom UI buffers.
+
+* Version 0.2.0 on 2022-07-01
+:PROPERTIES:
+:CUSTOM_ID: h:76673384-4888-4160-b4fe-b294e78c54ac
+:END:
+
+This is a stability release that introduces minor tweaks while
+formalising point releases which were already available to users.
+
++ When there is only one preset defined in the user option
+  ~cursory-presets~ the command ~cursory-set-preset~ will not prompt for
+  completion.  It will apply the sole preset outright.
+
++ Simplified the sample code in the manual for restoring the last preset
+  after starting Emacs.  The code is now written as follows:
+
+  #+begin_src emacs-lisp
+  ;; Set last preset or fall back to desired style from `cursory-presets'.
+  (cursory-set-preset (or (cursory-restore-latest-preset) 'bar))
+  #+end_src
+
+  Thanks to Christopher League for the original idea over at the
+  =fontaine= mailing list (Fontaine is another package of mine):
+  <https://lists.sr.ht/~protesilaos/fontaine/%3C87sfpop0dm.fsf@contrapunctus.net%3E#%3C87pmksoyv6.fsf@contrapunctus.net%3E>
+
++ Simplified the value of the ~cursory-presets~ user option.  It now
+  looks like this:
+
+  #+begin_src emacs-lisp
+  '((bar
+     :cursor-type (bar . 2)
+     :cursor-in-non-selected-windows hollow
+     :blink-cursor-blinks 10
+     :blink-cursor-interval 0.5
+     :blink-cursor-delay 0.2)
+    (box
+     :cursor-type box
+     :cursor-in-non-selected-windows hollow
+     :blink-cursor-blinks 10
+     :blink-cursor-interval 0.5
+     :blink-cursor-delay 0.2)
+    (underscore
+     :cursor-type (hbar . 3)
+     :cursor-in-non-selected-windows hollow
+     :blink-cursor-blinks 50
+     :blink-cursor-interval 0.2
+     :blink-cursor-delay 0.2))
+  #+end_src
+
+  Thanks to Philip Kaludercic for the patch.
+
++ Fixed the =:type= of the ~cursory-presets~ declaration.  The Custom UI
+  should now be able to read all values properly.  Courtesy of Philip
+  Kaludercic.
+
++ Named the mailing list address as the =Maintainer:= of Cursory.
+  Together with the other package headers, it helps the user find our
+  primary sources.  This is to conform with work being done in
+  package.el by Philip Kaludercic.  I was informed about it here:
+  <https://lists.sr.ht/~protesilaos/general-issues/%3C875ykl84yi.fsf%40posteo.net%3E>.
+
++ Included a reference to the "devel" version of GNU ELPA.  My blog post
+  covers the technicalities: https://protesilaos.com/codelog/2022-05-13-emacs-elpa-devel/.
+
++ Mentioned in the manual the =electric-cursor= package.  The text reads
+  thus:
+
+  #+begin_quote
+  The =electric-cursor= package by Case Duckworth lets the user
+  automatically change the cursor style when a certain mode is activated.
+  For example, the box is the default and switches to a bar when
+  ~overwrite-mode~ is on: https://github.com/duckwork/electric-cursor.
+  #+end_quote
+
+* Version 0.1.0 on 2022-04-15
+:PROPERTIES:
+:CUSTOM_ID: h:750618bd-d3ea-4eac-a061-95d3120d5f6e
+:END:
+
+Initial release of the package.  Please read the manual.
+
+The core idea for this package was implemented in the =prot-cursor.el=
+file that is part of [[https://sr.ht/~protesilaos/dotfiles/][my dotfiles]] (now deprecated).  I was using it at
+least since the end of 2020 or beginning of 2021.

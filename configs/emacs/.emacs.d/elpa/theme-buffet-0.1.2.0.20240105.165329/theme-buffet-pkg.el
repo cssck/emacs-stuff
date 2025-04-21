@@ -1,0 +1,2 @@
+;; Generated package description from theme-buffet.el  -*- no-byte-compile: t -*-
+(define-package "theme-buffet" "0.1.2.0.20240105.165329" "Time based theme switcher" '((emacs "29.1")) :commit "06f1be349e9c3d124520b18742911307de9abda3" :authors '(("Bruno Boal" . "egomet@bboal.com") ("Protesilaos Stavrou" . "info@protesilaos.com")) :maintainer '("Theme-Buffet Development" . "~bboal/general-issues@lists.sr.ht") :url "https://git.sr.ht/~bboal/theme-buffet")

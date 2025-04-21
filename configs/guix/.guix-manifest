@@ -1,4 +1,4 @@
-;; This "manifest" file can be passed to 'guix package -m' to reproduce
+ ;; This "manifest" file can be passed to 'guix package -m' to reproduce
 ;; the content of your profile.  This is "symbolic": it only specifies
 ;; package names.  To reproduce the exact same profile, you also need to
 ;; capture the channels being used, as returned by "guix describe".
@@ -13,7 +13,6 @@
         "emacs-xwidgets"
         "gcc-toolchain@11"
         "ncurses"
-        "vscodium"
         "python-lsp-server"
         "pamixer"
         "xfce4-pulseaudio-plugin"

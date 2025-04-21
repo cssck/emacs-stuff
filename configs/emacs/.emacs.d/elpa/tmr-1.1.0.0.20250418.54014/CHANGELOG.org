@@ -1,0 +1,430 @@
+#+title: Change log of TMR
+#+author: Protesilaos Stavrou
+#+email: info@protesilaos.com
+#+options: ':nil toc:nil num:nil author:nil email:nil
+#+startup: content
+
+This document contains the release notes for each tagged commit on the
+project's main git repository: <https://github.com/protesilaos/tmr>.
+
+The newest release is at the top.  For further details, please consult
+the manual: <https://protesilaos.com/emacs/tmr>.
+
+#+toc: headlines 1 insert TOC here, with one headline level
+
+* Version 1.1.0 on 2025-04-18
+:PROPERTIES:
+:CUSTOM_ID: h:41248cbf-d399-411d-91ff-5359a00a1577
+:END:
+
+This version makes small refinements to an already stable package.
+
+** All of =tmr-tabulated.el=  is part of =tmr.el=
+:PROPERTIES:
+:CUSTOM_ID: h:cd10fa6b-60ed-4045-ae32-780e62b50f21
+:END:
+
+The command ~tmr-tabulated-view~, which produces a grid with
+timers+descriptions, used to be in a separate file. It now is part of
+the singular =tmr.el= to keep things simple. Users who were using
+=(require 'tmr-tabulated)= or similar will now get a warning. Simply
+load ~tmr~ instead.
+
+** Refined the behaviour of the ~tmr-tabulated-view~ command
+:PROPERTIES:
+:CUSTOM_ID: h:bd56a213-7714-4bd7-bd1a-f3ac108f27d2
+:END:
+
+When the command ~tmr-tabulated-view~ (alias ~tmr-list-timers~) is
+called interactively, it uses the =*tmr-tabulated-view*= buffer just
+as it did before. Though it also evaluates the new user option
+~tmr-list-timers-action-alist~: it is a variable that controls where
+the buffer is displayed. The default value displays the buffer at the
+bottom of the Emacs frame and makes some other tweaks for usability.
+
+Watch my video on the ~display-buffer-alist~ for further details on
+how to control the display of buffers: <https://protesilaos.com/codelog/2024-02-08-emacs-window-rules-display-buffer-alist/>.
+
+The ~tmr-tabulated-view~ command is further revised to make it
+callable from a program. One scenario where we do this is to interrupt
+the termination of Emacs if there are running timers (more below).
+
+** TMR interrupts the termination of Emacs if it must
+:PROPERTIES:
+:CUSTOM_ID: h:5a4bf956-b1c2-446b-848c-eb64ffa50109
+:END:
+
+In the past, we did not have anything to prevent the termination of
+Emacs if timers were running: Emacs would simply shut down. Now we
+define the ~tmr-kill-emacs-query-function~, which is added to the
+standard ~kill-emacs-query-functions~: if there are running timers, it
+asks for confirmation before closing Emacs. To make it easier for
+users to decide how to proceed, it also pops up the list with all the
+timers (i.e. it uses ~tmr-tabulated-view~ from Lisp, as noted above).
+
+** The list view is easier to follow
+:PROPERTIES:
+:CUSTOM_ID: h:c432f1ab-dcaf-4a01-8004-cf268a24b228
+:END:
+
+The buffer produced by ~tmr-tabulated-view~ now uses more colours to
+make it easier to track the data it presents. These are all the faces
+it applies:
+
+- ~tmr-tabulated-start-time~ :: The time when the timer was started.
+
+- ~tmr-tabulated-end-time~ :: The time when the timer is set to end.
+
+- ~tmr-tabulated-remaining-time~ :: The remaining time.
+
+- ~tmr-tabulated-acknowledgement~ :: Whether the timer needs to be
+  "acknowledged" after it ends (if it is marked as "acknowledged",
+  then it will not go away until the user confirms they have seen it).
+
+- ~tmr-tabulated-description~ :: The text describing what the timer is
+  about.
+
+* Version 1.0.0 on 2024-08-30
+:PROPERTIES:
+:CUSTOM_ID: h:88595352-0263-425c-baab-6042f63ae28a
+:END:
+
+This version adds quality-of-life improvements to an already stable
+base.
+
+** The ~tmr-with-details~ supersedes the ~tmr-with-description~
+:PROPERTIES:
+:CUSTOM_ID: h:ac3d5ea6-2e89-477b-a5eb-9b408ef30b4e
+:END:
+
+The ~tmr-with-description~ would always prompt for a time input and
+then a description of the resulting timer object. We now provide a
+more general command, ~tmr-with-details~, which does this in addition
+to an extra prompt for an acknowledgement. What an "acknowledgement"
+is, is documented in the following section.
+
+** Timers can now be "acknowledged"
+:PROPERTIES:
+:CUSTOM_ID: h:1a971ba1-09a6-4df6-bbe5-73685430417c
+:END:
+
+Normally, when a timer elapses it does not stick around to notify the
+user again and again. This means that the user may miss the one
+notification if, say, they were away from the computer. As such, we
+now provide an opt-in mechanism where a timer persists until it is
+explicitly acknowledged as finished. The acknowledgement is either an
+additional duration for the timer to produce another notification in
+the future, or an explicit consent from the timer to count as
+finished. The goal is to help the user never miss a timer.
+
+Setting up an acknowledgement can be done in the following ways:
+
+- Call the standard ~tmr~ command with a prefix argument (=C-u= by
+  default). This will make it prompt for a description and an
+  acknowledgement.
+
+- Use the new command ~tmr-with-details~, which asks for a timer
+  input, a description, and whether to include an acknowledgement
+  prompt.
+
+- Use the new command ~tmr-toggle-acknowledge~, which will prompt for
+  a timer and then toggle the acknowledgement status on/off. In this
+  scenario, the timer already exists (e.g. it was created with ~tmr~
+  without a prefix argument).
+
+All timers are listed in a nice list with the command
+~tmr-tabulated-view~. An extra column will indicate their
+acknowledgement status.
+
+Thanks to Daniel Mendler for contributing this feature. This was done
+in the form of patches, sent via email. Daniel has assigned copyright
+to the Free Software Foundation.
+
+** The ~tmr-list-timers~ is an alias for ~tmr-tabulated-view~
+:PROPERTIES:
+:CUSTOM_ID: h:f1d80033-45f5-47cc-b76b-c8aee05dd789
+:END:
+
+Perhaps the "list timers" is a more meaningful description of what the
+command does, as opposed to "tabulated view".
+
+** Use the ~tmr-prefix-map~
+:PROPERTIES:
+:CUSTOM_ID: h:20dcbc95-a376-4130-8ae8-7be6c7aa149a
+:END:
+
+We now define a prefix keymap that users can bind directly to a key
+and get all the TMR commands in one go. For example, this adds all TMR
+commands behind the =C-c t= prefix:
+
+#+begin_src emacs-lisp
+(define-key global-map (kbd "C-c t") 'tmr-prefix-map)
+#+end_src
+
+Thanks to Daniel Mendler for this patch.
+
+** TMR uses its own faces
+:PROPERTIES:
+:CUSTOM_ID: h:1d6ddc5a-8856-40d4-8328-f6413cb37f30
+:END:
+
+Theme developers or users can now modify how the various TMR
+indicators look by tweaking the faces we provide:
+
+- ~tmr-duration~
+- ~tmr-description~
+- ~tmr-start-time~
+- ~tmr-end-time~
+- ~tmr-is-acknowledged~
+- ~tmr-must-be-acknowledged~
+- ~tmr-finished~
+
+The default values inherit from basic faces that should be supported
+everywhere.
+
+Existing users will not notice any visual difference, other things
+being equal.
+
+** Fixed some typos in the manual
+:PROPERTIES:
+:CUSTOM_ID: h:2b0e0105-d142-45de-807d-b2ef60c25dc8
+:END:
+
+Thanks to Ed Tavinor for the contribution. The change pertains to
+typos and is within the limit of edits that do not require copyright
+assignment to the Free Software Foundation.
+
+* Version 0.4.0 on 2022-07-07
+:PROPERTIES:
+:CUSTOM_ID: h:52e3b3ac-70ef-47c5-895c-92adbd5c92b0
+:END:
+
+The general theme of this release is that TMR became simpler, better,
+and more robust.  Daniel Mendler provided lots of patches and is now
+recognised as co-author of the package together with Damien Cassou and
+me (Protesilaos).  With the exception of documentation changes and other
+accompanying tweaks, all of the following are courtesy of Daniel
+Mendler.  Consult the git log for the minutia.
+
++ Timers can also be set using an absolute time input.  For example,
+  =21:45= will set a timer from now until the specified time.  The
+  familiar ways of starting timers with relative values, work as they
+  did before.  This is part of a wider internal revision to make the
+  parsing of input more strict.
+
++ TMR no longer maintains distinct feature sets between its minibuffer
+  and tabulated interfaces.  What works in one context, works equally in
+  the other.  All commands that were formerly available only in the
+  ~tmr-tabulated-mode~ (accessed via ~tmr-tabulated-view~) are now
+  implemented anew to provide the requisite minibuffer capabilities.
+  When called from inside the ~tmr-tabulated-mode~, the commands operate
+  on the timer at point.  Otherwise they prompt for completion among the
+  available timers (where relevant).  This covers all operations for
+  creating, cloning, [re-]describing, rescheduling, and removing timers.
+  The ~tmr-tabulated-mode-map~ is updated thus:
+
+  #+begin_src emacs-lisp
+  (defvar tmr-tabulated-mode-map
+    (let ((map (make-sparse-keymap)))
+      (define-key map "k" #'tmr-remove)
+      (define-key map "r" #'tmr-remove)
+      (define-key map "R" #'tmr-remove-finished)
+      (define-key map "+" #'tmr)
+      (define-key map "t" #'tmr)
+      (define-key map "*" #'tmr-with-description)
+      (define-key map "T" #'tmr-with-description)
+      (define-key map "c" #'tmr-clone)
+      (define-key map "e" #'tmr-edit-description)
+      (define-key map "s" #'tmr-reschedule)
+      map)
+    "Keybindings for `tmr-tabulated-mode-map'.")
+  #+end_src
+
+  Similarly, our sample key bindings are these:
+
+  #+begin_src emacs-lisp
+  ;; OPTIONALLY set your own global key bindings:
+  (let ((map global-map))
+    (define-key map (kbd "C-c t t") #'tmr)
+    (define-key map (kbd "C-c t T") #'tmr-with-description)
+    (define-key map (kbd "C-c t l") #'tmr-tabulated-view) ; "list timers" mnemonic
+    (define-key map (kbd "C-c t c") #'tmr-clone)
+    (define-key map (kbd "C-c t k") #'tmr-cancel)
+    (define-key map (kbd "C-c t s") #'tmr-reschedule)
+    (define-key map (kbd "C-c t e") #'tmr-edit-description)
+    (define-key map (kbd "C-c t r") #'tmr-remove)
+    (define-key map (kbd "C-c t R") #'tmr-remove-finished))
+  #+end_src
+
++ The tabulated view now shows the remaining time for all timer objects.
+  This is how the =*tmr-tabulated-view*= buffer is formatted:
+
+  #+begin_example
+  Start      End        Remaining  Description
+  10:11:49   10:11:54   ✔
+  10:11:36   10:31:36   19m 35s
+  10:11:32   10:26:32   14m 31s    Yet another test
+  10:11:16   10:21:16   9m 14s     Testing how it works
+  #+end_example
+
++ All timer objects are refactored to expose a properly formatted
+  completion table.  The completion category is ~tmr-timer~.  In
+  practical terms, =embark= (and other standards-compliant packages) can
+  operate on them.  The manual provides sample glue code for Embark:
+
+  #+begin_src emacs-lisp
+  (defvar tmr-action-map
+    (let ((map (make-sparse-keymap)))
+      (define-key map "k" #'tmr-remove)
+      (define-key map "r" #'tmr-remove)
+      (define-key map "R" #'tmr-remove-finished)
+      (define-key map "c" #'tmr-clone)
+      (define-key map "e" #'tmr-edit-description)
+      (define-key map "s" #'tmr-reschedule)
+      map))
+
+  (with-eval-after-load 'embark
+    (add-to-list 'embark-keymap-alist '(tmr-timer . tmr-action-map))
+    (cl-loop
+     for cmd the key-bindings of tmr-action-map
+     if (commandp cmd) do
+     (add-to-list 'embark-post-action-hooks (list cmd 'embark--restart))))
+  #+end_src
+
+  The [[https://github.com/oantolin/embark/wiki/Additional-Actions#actions-for-prots-tmr-tmr-may-ring][Embark Wiki]] is updated accordingly.
+
++ The new user option ~tmr-confirm-single-timer~ governs how TMR should
+  behave while operating on the sole timer.  If non-nil (the default),
+  TMR will always use the minibuffer to select a timer object to operate
+  on, even when there is only one candidate available.  If set to nil,
+  TMR will not ask for confirmation when there is one timer available:
+  the operation will be carried out outright.  The default value is
+  optimal for use with Embark.
+
++ The existing user option ~tmr-description-list~ is revised to accept
+  either a list of strings (the old approach) or a symbol of a variable
+  that holds a list of strings.  In the latter case, this can be the
+  ~tmr-description-history~, which is a variable that stores the user's
+  input at the relevant minibuffer prompt.  We have made this the new
+  default value, as it grows naturally to reflect one's usage of TMR.
+  Minibuffer histories can persist between sessions if the user enables
+  the built-in =savehist= library.  Sample configuration:
+
+  #+begin_src emacs-lisp
+  (require 'savehist)
+  (setq savehist-file (locate-user-emacs-file "savehist"))
+  (setq history-length 10000)
+  (setq history-delete-duplicates t)
+  (setq savehist-save-minibuffer-history t)
+  (add-hook 'after-init-hook #'savehist-mode)
+  #+end_src
+
++ Fixed an edge case where a ~when-let*~ form did not return the
+  expected value.  Thanks to Nathan R. DeGruchy for the patch.  The
+  patch is below the ~15 line threshold and thus does not require
+  copyright assignment to the Free Software Foundation.
+
++ Named the mailing list address as the =Maintainer:= of Denote.
+  Together with the other package headers, they help the user find our
+  primary sources and/or communication channels.  This change conforms
+  with work being done upstream in package.el by Philip Kaludercic.  I
+  was informed about it here:
+  <https://lists.sr.ht/~protesilaos/general-issues/%3C875ykl84yi.fsf%40posteo.net%3E>.
+
++ Updated the manual to reflect the aforementioned.
+
+* Version 0.3.0 on 2022-05-17
+:PROPERTIES:
+:CUSTOM_ID: h:0a2d4909-0079-47e9-97f4-220e85a811f9
+:END:
+
+The gist of TMR's May Release is that TMR is Maintained Rigorously---but
+enough with The Mostly Recursive acronyms!
+
++ This is the first version for which we produce a change log.  The
+  short story of previous releases: I (Protesilaos) was using and
+  developing TMR (pronounced as "timer" or "T-M-R") as part of my
+  personal setup for more than a year until I eventually contributed it
+  to GNU ELPA.
+
++ What was once =tmr.el= is now split up into purpose-specific files:
+  =tmr.el= (core functionality), =tmr-tabulated.el= (grid view),
+  =tmr-sound.el= (audible notifications), and =tmr-notification.el=
+  (desktop notifications).
+
++ The ~tmr-with-description~ command creates a new timer while always
+  asking for a description.  Whereas the standard ~tmr~ command prompts
+  for a description only when invoked with a prefix argument.
+
++ The ~tmr-clone~ command copies the duration and optional description
+  of an existing timer object into a new one.  The operation is
+  performed without further questions, except if a prefix argument is
+  supplied: in that case the command will prompt for a duration and, if
+  the original timer had a description, for one as well.  The default
+  values of these prompts are those of the original timer.
+
++ The ~tmr-remove-finished~ deletes all elapsed timers.  This means that
+  they are removed from the list of available timers and, thus, cannot
+  be cloned.
+
++ The ~tmr-timer-created-functions~, ~tmr-timer-completed-functions~,
+  and ~tmr-timer-cancelled-functions~ are hooks which can be used to
+  control what happens once a timer is (i) created, (ii) elapses, or
+  (iii) is cancelled.
+
++ Elapsed and running timers are displayed in a grid view with the
+  command ~tmr-tabulated-view~.  The buffer looks like this:
+
+  #+begin_example
+  Start      End        Finished?  Description
+  09:22:43   09:32:43   ✔         Prepare tea
+  09:17:14   09:37:14              Boil water
+  09:07:03   09:57:03              Bake bread
+  #+end_example
+
++ In that grid view, it is possible to create a new timer, or operate on
+  the one at point to cancel, clone, redescribe, and reschedule it.
+
++ Thanks to Christian Tietze for implementing changes to how desktop
+  notifications are handled.  The overall effect should still be the
+  same for existing users, though the implementation has been redesigned.
+
++ Thanks to Damien Cassou who is now is my co-author due to multiple
+  contributions for =tmr.el=, the addition of the grid view, and the
+  splitting of TMR into numerous files.  Please consult the Git commit
+  log for the details.  (I still am the maintainer.)
+
++ Christian and Damien have assigned copyright to the Free Software
+  Foundation.  It is required for all packages distributed via GNU ELPA.
+
+The manual documents the technicalities and provides a sample
+configuration.  Either evaluate the form =(info "(tmr) Top")= if you
+have the package installed or visit https://protesilaos.com/emacs/tmr.
+
+* Version 0.2.0 on 2022-04-21
+:PROPERTIES:
+:CUSTOM_ID: h:054285c2-3d90-4adc-ada4-61222b31fb85
+:END:
+
+This entry is retroactively introduced on 2022-07-07.
+
++ Changed the ~tmr~ and ~tmr-cancel~ commands to handle a list of timers
+  instead of only interfacing with the last timer.
+
++ Improved the documentation.
+
++ Made various internal tweaks and refinements.
+
++ Added TMR to the official GNU ELPA archive as =tmr=.
+
+* Version 0.1.0 on 2021-10-02
+:PROPERTIES:
+:CUSTOM_ID: h:1fce2c20-a16c-4ea9-9006-cf565f78f812
+:END:
+
+This entry is retroactively introduced on 2022-07-07.
+
+TMR was originally [[https://protesilaos.com/codelog/2021-10-02-introducing-tmr-el/][announced on my website]].  The code was developed as
+part of [[https://protesilaos.com/emacs/dotemacs][my dotemacs]] for several months before it was placed in its own
+Git repo.  Even before the Elisp implementation, the core idea existed
+as a standalone shell script, which is still part of [[https://git.sr.ht/~protesilaos/dotfiles][my dotfiles]].

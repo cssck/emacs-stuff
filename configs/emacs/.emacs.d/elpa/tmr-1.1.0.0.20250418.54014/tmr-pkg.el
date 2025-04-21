@@ -1,0 +1,2 @@
+;; Generated package description from tmr.el  -*- mode: lisp-data; no-byte-compile: t -*-
+(define-package "tmr" "1.1.0.0.20250418.54014" "Set timers using a convenient notation" '((emacs "29.1")) :commit "32e522b07ba097de10544208dfa6239b878237c9" :authors '(("Protesilaos Stavrou" . "info@protesilaos.com") ("Damien Cassou" . "damien@cassou.me") ("Daniel Mendler" . "mail@daniel-mendler.de")) :maintainer '("Protesilaos Stavrou" . "info@protesilaos.com") :keywords '("convenience" "timer") :url "https://github.com/protesilaos/tmr")

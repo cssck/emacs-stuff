@@ -1,0 +1,564 @@
+#+title: Change log of Beframe
+#+author: Protesilaos Stavrou
+#+email: info@protesilaos.com
+#+options: ':nil toc:nil num:nil author:nil email:nil
+
+This document contains the release notes for each tagged commit on the
+project's main git repository: <https://github.com/protesilaos/beframe>.
+
+The newest release is at the top.  For further details, please consult
+the manual: <https://protesilaos.com/emacs/beframe>.
+
+* Version 1.3.0 on 2025-01-24
+:PROPERTIES:
+:CUSTOM_ID: h:1ff9bbfe-6a4e-4bcb-958d-6930a7816235
+:END:
+
+This version contains quality-of-life refinements to an already stable
+package.
+
+** Make frame names unique, if needed
+:PROPERTIES:
+:CUSTOM_ID: h:ce628b27-1f7a-4572-81d6-352cde2ce291
+:END:
+
+We provide the user option ~beframe-rename-function~, which will be
+called with the new frame when ~beframe-mode~ is enabled. The idea is
+to automatically apply a helpful name to the frame that was created.
+The default function we use is ~beframe-rename-frame~, which will do
+the right thing to get a suitable name. To make this even more robust,
+we now disambiguate equal frame names by appending a number to their
+name. So instead of having two or more frames all named =hello=, you
+get =hello=, =hello<2>=, and so on.
+
+Thanks to Vedang Manerikar for the original contribution in pull
+request 12: <https://github.com/protesilaos/beframe/pull/12>. The
+change is within the ~15-line limit, meaning that Vedang does not need
+to assign copyright to the Free Software Foundation (though I believe
+the paperwork is done anyway). I made some further changes on top.
+
+Remember that you can make certain commands automatically generate a
+frame and run therein by adding them to the list of ~beframe-functions-in-frames~.
+A common use-case is to do this for switching to a new project, hence:
+
+#+begin_src emacs-lisp
+(setq beframe-functions-in-frames '(project-prompt-project-dir))
+#+end_src
+
+** Use the optional ~beframe-transient~ instead of the prefix key map
+:PROPERTIES:
+:CUSTOM_ID: h:cf5cc19b-daf5-4f4f-8c70-b18cb694eb55
+:END:
+
+We provide a regular prefix key map where Beframe commands are bound
+to. Users can access all the commands via a prefix key, such as with:
+
+#+begin_src emacs-lisp
+(define-key global-map (kbd "C-c b") #'beframe-prefix-map)
+#+end_src
+
+Users who prefer a more graphical interface can instead rely on the
+new ~beframe-transient~. It is the same principle as the prefix key
+map:
+
+#+begin_src emacs-lisp
+(define-key global-map (kbd "C-c b") #'beframe-transient)
+#+end_src
+
+[ The difference between the two interfaces is small when using the
+  ~which-key~ package. ]
+
+** The buffer prompt clarifies that it is "Beframed"
+:PROPERTIES:
+:CUSTOM_ID: h:93f16de4-c6f0-4c4d-8888-56ded7407b2f
+:END:
+
+While using the ~beframe-mode~, the standard ~read-buffer-function~ is
+set to a Beframe function that prompts for a buffer. The idea is to
+filter the list of buffers to only show those that are specific to the
+current/given frame. To make this more clear, the text of the prompt
+now has =[Beframed]= prepended to it.
+
+I do not think we need a user option for this, though I am happy to
+reconsider if there is a good reason for it.
+
+** Miscellaneous
+:PROPERTIES:
+:CUSTOM_ID: h:064beab3-8f24-4d58-9d28-4727c2e563c5
+:END:
+
+- Fixed the function aliases of the "assume" and "unassume" commands
+  that take a regular expression as input to perform their operation.
+  The old aliases where written in the wrong way, such that they were
+  rendering the original function void.
+
+- Bound a few more commands to the ~beframe-prefix-map~. Everything
+  should now be there, to improve discoverability (remember that =C-h=
+  after an incomplete key sequence will produce a Help buffer that
+  lists all the keys+commands which extend the given key sequence).
+
+- The name of the ~beframe-buffer-menu~ buffer is more descriptive.
+  The command ~beframe-buffer-menu~ puts the beframed list of buffers
+  in a buffer. Its old naming scheme was =*Buffer list for NAME*=,
+  where =NAME= is the name of the frame. Whereas now it is =*Buffer
+  list for ‘NAME’ frame*=.
+
+- Same as above for the frame-specific scratch buffers. Those are
+  generated for new frames when ~beframe-create-frame-scratch-buffer~
+  is non-nil (the default) and ~beframe-mode~ is enabled.
+
+* Version 1.2.0 on 2024-10-23
+:PROPERTIES:
+:CUSTOM_ID: h:c6250209-9bb9-4243-bec0-e925adeffaeb
+:END:
+
+Beframe is in a stable state. This version includes three new commands
+as well as quality-of-life improvements.
+
+** Assume or unassume buffers using a regular expression
+:PROPERTIES:
+:CUSTOM_ID: h:a9d20070-6d73-4033-9a9a-430b36e9b466
+:END:
+
+There two more commands to assume/unassume buffers from/to the current
+frame:
+
+- ~beframe-assume-buffers-matching-regexp~
+- ~beframe-unassume-buffers-matching-regexp~
+
+They both work by matching a regular expression against the global
+list of buffer names. When called with a prefix argument, the regular
+expression is matched against the buffer name or the name of the
+buffer's major mode.
+
+This is a convenient way to, for example, collect all email or IRC
+buffers in a single frame and work with them as you will.
+
+** Delete buffers matching a regular expression
+:PROPERTIES:
+:CUSTOM_ID: h:a1ad4562-3dfa-4483-b19a-08c0a9ef3e99
+:END:
+
+Following the same principle as above, we have the command
+~beframe-kill-buffers-matching-regexp~. The regular expression is
+matched against the buffer name or the name of the major mode when
+called with a prefix argument.
+
+Since this is a destructive operation, the command prompts for
+confirmation to operate on the buffers it has found. Users who do not
+like this check can set the new user option ~beframe-kill-buffers-no-confirm~
+to a non-nil value.
+
+Note that Emacs may still prompt for further confirmation if the given
+buffer is unsaved, has a running process, and the like. Also note that
+this operation applies to all frames because buffers are shared by the
+Emacs session even though Beframe only exposes those that pertain to a
+particular frame (when ~beframe-mode~ is enabled).
+
+** Commands that assume/unassume buffers report on their status
+:PROPERTIES:
+:CUSTOM_ID: h:24b217b5-bf57-4b11-bbb4-014ac2ba4f2d
+:END:
+
+All relevant commands will now log a message about what they did. If,
+for example, ~beframe-assume-buffers-matching-regexp~ assumes two new
+buffers into the current frame, the message will be something like:
+
+: Assumed into current frame 2 buffers: (name-of-buffer-one name-of-buffer-two)
+
+Similarly:
+
+: Unassumed from current frame 2 buffers: (name-of-buffer-one name-of-buffer-two)
+
+If the command does not change the frame's buffer list, it will report
+as much:
+
+: Did not modify the frame's buffer list
+
+** Several internal refinements
+:PROPERTIES:
+:CUSTOM_ID: h:1c5ed1dd-d7ec-43ad-a734-18162efc528a
+:END:
+
+- The way we derive the "global buffers" (buffers that are available
+  in all frames, per the user option ~beframe-global-buffers~) is more
+  efficient. Thanks to Bruno Boal for the contribution in pull request
+  7: <https://github.com/protesilaos/beframe/pull/7>. Bruno has
+  assigned copyright to the Free Software Foundation.
+
+- We now have a single function to get a list of buffers, given
+  certain parameters. Part of this work is by Bruno Boal, from the
+  aforementioned pull request. The rest is from me, which includes the
+  addition of the functionality about matching buffers with a regular
+  expression (as seen in the new commands described herein).
+
+- Inferring the name of a project among those known to =project.el= no
+  longer fails when the path is abbreviated (like =~/path/to/repo=).
+  Thanks to Fritz Grabo for the contribution and for Bruno Boal for
+  double-checking it. This was done in pull request 6:
+  <https://github.com/protesilaos/beframe/pull/6>. The change is
+  small, meaning that Fritz does not need to assign copyright to the
+  Free Software Foundation.
+
+- The subroutines to assume/unassume buffers are consolidated into one
+  function. It not only provides a single point of entry, but also
+  takes care to carry out its operation only when it will yield a
+  change to the current frame's buffer list.
+
+* 1.1.0 on 2024-05-06
+:PROPERTIES:
+:CUSTOM_ID: h:6cdbd605-8a3c-4e71-849e-e17b75805b2f
+:END:
+
+This is a small release that adds some quality-of-life refinements to
+a stable package.
+
+** The ~beframe-global-buffers~ is more flexible
+:PROPERTIES:
+:CUSTOM_ID: h:ce67d817-c394-460f-af35-994459a8903b
+:END:
+
+This is a user option to specify which buffers should appear in all
+frames. These "global" buffers are thus not associated only with the
+frame in which they where displayed in.
+
+Before, the value of this user option was a list of strings that were
+matching buffer names literally. Now it is a list of strings which are
+understood as regular expressions as well as a list of symbols
+representing major modes.
+
+Consider this example:
+
+#+begin_src emacs-lisp
+(setq beframe-global-buffers '("\\*scratch\\*" ".*notmuch.*" emacs-lisp-mode))
+#+end_src
+
+It matches a buffer with the literal name =*scratch*=, all buffers
+that include =notmuch= in their name, and all buffers whose major mode
+is ~emacs-lisp-mode~ or derived therefrom.
+
+You can now more easily put all buffers in the global list, such as
+for email or IRC.
+
+** The ~beframe-prefix-map~ is now a command
+:PROPERTIES:
+:CUSTOM_ID: h:c50ef266-4bd2-4413-bca5-e8118c84586f
+:END:
+
+Before, this symbol was defined as a variable, which held the value of
+the key bindings. Users where expected to bind this variable to a
+key, such as:
+
+#+begin_src emacs-lisp
+(define-key global-map (kbd "C-c b") beframe-prefix-map)
+#+end_src
+
+This would set up =C-c b= as a prefix for all the key bindings inside
+of ~beframe-prefix-map~. However, any changes to that map would not be
+automatically included in the prefix. The above binding had to be
+evaluated again (because we were binding a fixed value directly,
+instead of having the indirection of a symbol that points to a value).
+
+Now the ~beframe-prefix-map~ is implemented as a variable and a
+command. The variable holds the value of the key bindings, while the
+command is meant to be assigned to a key. For users, the change is
+trivial:
+
+#+begin_src emacs-lisp
+(define-key global-map (kbd "C-c b") 'beframe-prefix-map)
+#+end_src
+
+Notice the added single quote before ~beframe-prefix-map~. While only
+an extra character in the user's configuration, this is a major change
+because any changes made to the key map will now be automatically
+available under the defined prefix. No need to evaluate the key
+binding again.
+
+* 1.0.0 on 2023-11-17
+:PROPERTIES:
+:CUSTOM_ID: h:9a00ab34-a07f-4bb3-9397-6b1383fcebca
+:END:
+
+~beframe~ is in a stable state. This release formalises a set of
+stability enhancements and quality-of-life improvements.
+
+** The menu bar helps you discover Beframe commands
+:PROPERTIES:
+:CUSTOM_ID: h:e1aec53d-ed00-4eed-8763-78f7ad9c307d
+:END:
+
+A submenu with Beframe commands is available to users of
+~menu-bar-mode~. It is available at =Buffers > BEFRAME buffers=. Check
+the original announcement, which includes screenshots:
+<https://protesilaos.com/codelog/2023-10-08-emacs-beframe-menu/>.
+
+[ As an aside, never tell a new user to add ~(menu-bar-mode -1)~ to
+  their Emacs init file. It is not helpful. ]
+
+** The sample integration with ~consult~ can flip between recent buffers
+:PROPERTIES:
+:CUSTOM_ID: h:377b869e-a552-41e7-8e52-343a434a77af
+:END:
+
+In the manual of ~beframe~ there is a section about augmenting the
+~consult-buffer~ command with a new source of beframed buffers
+(buffers specific to the current frame). Edgar Vincent made a change
+that sorts buffers by last viewed, meaning that the previous buffer is
+at the top of the list. The change is within the ~15 line limit and
+thus Edgar does not need to assign copyright to the Free Software
+Foundation. Discussed on the mailing list:
+<https://lists.sr.ht/~protesilaos/general-issues/%3C878r97fxmc.fsf%40protesilaos.com%3E>.
+
+Refer to the manual for the code to integrate ~beframe~ with ~consult~:
+<https://protesilaos.com/emacs/beframe#h:1c2d3d64-aa7b-4585-a418-ccedbb548b38>.
+
+NOTE that you do not need ~consult~ to use ~beframe~: (i) the
+~beframe-mode~ makes the regular ~switch-to-buffer~ work in a beframed
+way and/or (ii) use the ~beframe-buffer-menu~ to get a list of the
+beframed buffers (call the latter command with a prefix key (=C-u= by
+default) to select a frame whose buffers you want to list).
+
+** The ~beframe-rename-function~ can take a ~nil~ value
+:PROPERTIES:
+:CUSTOM_ID: h:d64e0861-15a7-40ad-8ece-aba232840fb8
+:END:
+
+This was always the intent, though the code did not honour it. Thanks
+to Karthik Chikmagalur for reporting the bug on the mailing list:
+<https://lists.sr.ht/~protesilaos/general-issues/%3C87a5w8yi1n.fsf%40gmail.com%3E>.
+
+** General refinements
+:PROPERTIES:
+:CUSTOM_ID: h:494d4a62-567e-4886-af96-fa9e93e48083
+:END:
+
+- Commands that prompt for a frame (e.g. ~beframe-assume-frame-buffers~)
+  no longer try to perform their work if a single Emacs frame is
+  available. Instead, they return a ~user-error~.
+
+- The buffer that was current when a new frame was created is no
+  longer part of the new frame's buffer list. This means that the new
+  frame starts clean, including only the buffer specified in the user
+  option ~beframe-global-buffers~.
+
+- The code that renames a new frame based is better at inferring the
+  correct name. It now finds the =project.el= name, if available. The
+  manual explains how to use Beframe with projects:
+  <https://protesilaos.com/emacs/beframe#h:5b751614-8749-4aa8-aaed-f181beaddc57>
+  (to me, this is a killer feature).
+
+- Simplified how frames are set up. This guarantees that our functions
+  are called in the desired order.
+
+* 0.3.0 on 2023-05-21
+:PROPERTIES:
+:CUSTOM_ID: h:59120517-f6e0-4bb8-a495-c5eb40654d6a
+:END:
+
+** Use more descriptive names for assume/unassume commands
+:PROPERTIES:
+:CUSTOM_ID: h:a3b24770-40a2-4c97-8403-62bbf79720fa
+:END:
+
+Beframe limits the buffer list to buffers that are visited in the
+current frame.  I provide commands to assume (add) or unassume
+(remove) buffers from other frames, making for a powerful and flexible
+workflow:
+
+- In bulk :: Assume/unassume the (i) entire buffer list of a frame, or
+  the (ii) consolidated buffer list of all frames.
+
+- Selectively :: Use minibuffer completion to compile a list of
+  buffers to assume/unassume (iii) from the given frame, or (iv)
+  buffers from the consolidated buffer list.
+
+The commands that operate selectively are renamed to better describe
+what they do.  We thus have:
+
+| Deprecated name                   | New name                                           |
+|-----------------------------------+----------------------------------------------------|
+| beframe-assume-buffers            | beframe-assume-frame-buffers-selectively           |
+| beframe-assume-buffers-all-frames | beframe-assume-buffers-selectively-all-frames      |
+| beframe-unassume-buffers          | beframe-unassume-current-frame-buffers-selectively |
+
+To avoid potential confusion, the following command aliases are
+discontinued:
+
+- ~beframe-add-buffers~
+- ~beframe-remove-buffers~
+- ~beframe-add-frame-buffers~
+- ~beframe-remove-frame-buffers~
+
+** Provide the ~beframe-prefix-map~
+:PROPERTIES:
+:CUSTOM_ID: h:a34d0635-4022-41b0-bb41-3b6286c954cc
+:END:
+
+This is a keymap that binds the Beframe commands to recommended keys.
+As with all Emacs key bindings, those are configurable.
+
+I call it a "prefix" keymap because it is not bound anywhere and
+cannot be used by default.  The user must explicitly bind it to a key,
+which will be treated as a prefix key.  For example:
+
+#+begin_src emacs-lisp
+(define-key global-map (kbd "C-c b") beframe-prefix-map)
+#+end_src
+
+With the above code, =C-c b= becomes the prefix key that invokes
+Beframe commands.  Type =C-c b C-h= to show the available key
+bindings (by default =C-h= as a suffix to an incomplete key sequence
+produces a Help buffer that links to all the available bindings).
+
+The ~beframe-prefix-map~ and ~beframe-mode~ are used independent of
+each other.
+
+** Miscellaneous
+:PROPERTIES:
+:CUSTOM_ID: h:b5dcf56b-3668-4f3e-9743-771ce9b1eeb0
+:END:
+
+- Simplify how ~beframe-rename-function~ is added by the
+  ~beframe-mode~.
+- Refine the application of ~beframe-create-frame-scratch-buffer~ by
+  the ~beframe-mode~.
+- Tweak the ~beframe-buffer-sort-visibility~ function to be consistent
+  with the style of =beframe.el=.
+- Rewrite parts of the manual to reference the aforementioned.
+
+* 0.2.0 on 2023-03-27
+:PROPERTIES:
+:CUSTOM_ID: h:ba53a28d-7e85-4c9b-9770-22abb9263473
+:END:
+
+There were no release notes for the initial version of Beframe.  Watch
+the video demo I produced on 2023-02-28 to get an overview of what
+this package is all about:
+<https://protesilaos.com/codelog/2023-02-28-emacs-beframe-demo/>.
+
+In short: beframe your buffers, not your outlook.  Oops that is for
+the philosophy blog! 🙃
+
+** A beframed buffer menu
+:PROPERTIES:
+:CUSTOM_ID: h:345543c7-f61c-4656-964e-53f338ec7850
+:END:
+
+The command ~beframe-buffer-menu~ produces a dedicated buffer with a
+list of buffers for the current frame.  This is the counterpart of
+~beframe-switch-buffer~.  When called with a prefix argument (=C-u=
+with default key bindings), it prompts for a frame whose buffers it
+will display.
+
+** Frame-specific scratch buffer
+:PROPERTIES:
+:CUSTOM_ID: h:69df2c63-c509-4063-bf24-b6aa39c6cfca
+:END:
+
+The user option ~beframe-create-frame-scratch-buffer~ allows
+~beframe-mode~ to create a frame-specific scratch buffer that runs the
+~initial-major-mode~.  This is done upon the creation of a new frame
+and the scratch buffer is named after the frame it belongs to.  For
+example, if the frame is called =modus-themes=, the corresponding
+scratch buffer is =*scratch for modus-themes*=.  Set this user option
+to ~nil~ to disable the creation of such scratch buffers.
+
+The user option ~beframe-kill-frame-scratch-buffer~ is the counterpart
+of ~beframe-create-frame-scratch-buffer~.  It kills the frame-specific
+scratch buffer after the frame is deleted.  Set this user option to
+~nil~ to disable the killing of such buffers.
+
+** Assuming and unassuming buffers
+:PROPERTIES:
+:CUSTOM_ID: h:b0546404-2e70-44e4-84c9-e7fbf0786d04
+:END:
+
+Beframe makes it possible to add or remove buffers from the list of
+buffers associated with the current frame.  This provides for a
+flexible workflow where buffers can be initially beframed yet
+consolidated into new lists on demand.
+
+*** Assuming buffers
+:PROPERTIES:
+:CUSTOM_ID: h:4ec70ff0-531c-4a9c-9509-0ee49d26da71
+:END:
+
+To assume buffers is to include them in the buffer list associated
+with the current frame.
+
+- The command ~beframe-assume-frame-buffers~ (alias
+  ~beframe-add-frame-buffers~) prompts for a frame and then copies its
+  buffer list into the current frame.
+
+- The command ~beframe-assume-buffers~ (alias ~beframe-add-buffers~)
+  adds buffers from a given frame to the current frame.  In
+  interactive use, the command first prompts for a frame and then asks
+  about the list of buffers therein.  The to-be-assumed buffer list is
+  compiled with ~completing-read-multiple~.  This means that the user
+  can select multiple buffers, each separated by the ~crm-separator~
+  (typically a comma).
+
+- The command ~beframe-assume-buffers-all-frames~ prompts with
+  minibuffer completion for a list of buffers to assume.  The
+  interface is the same as that of ~beframe-assume-buffers~ except
+  that there is no prompt for a frame: buffers belong to the
+  consolidated buffer list (all frames).
+
+- The command ~beframe-assume-all-buffers-no-prompts~ unconditionally
+  assumes the consolidated buffer list.
+
+*** Unassuming buffers
+:PROPERTIES:
+:CUSTOM_ID: h:b98f5c92-23d6-464a-9001-9531e513dd73
+:END:
+
+To unassume buffers is to omit them from the buffer list associated with
+the current frame.
+
+- The command ~beframe-unassume-frame-buffers~ (alias
+  ~beframe-remove-frame-buffers~) prompts for a frame and then removes
+  its buffer list from the current frame.
+
+- The command ~beframe-unassume-buffers~ (alias
+  ~beframe-remove-buffers~) removes buffers from the current frame.
+  In interactive use, the to-be-unassumed buffer list is compiled with
+  ~completing-read-multiple~.  This means that the user can select
+  multiple buffers, each separated by the ~crm-separator~ (typically a
+  comma).
+
+- The command ~beframe-unassume-all-buffers-no-prompts~ unconditionally
+  unassumes the consolidated buffer list, but preserves the list
+  stored in the user option ~beframe-global-buffers~.
+
+** Sort beframed buffers from Lisp
+:PROPERTIES:
+:CUSTOM_ID: h:a72b304d-4dc4-48c2-8d29-7ccac1984422
+:END:
+
+This is courtesy of Tony Zorman:
+<https://lists.sr.ht/~protesilaos/general-issues/%3C87edq4n3qt.fsf%40hyperspace%3E>.
+
+#+begin_quote
+commit dfa4678c208e1e5c41413f2d39416f84c21f28ff
+Author: Tony Zorman <soliditsallgood@mailbox.org>
+Date:   Sat Mar 4 11:48:17 2023 +0100
+
+  Add the ability to sort the buffer list
+
+  Some completion libraries, like consult, give the user the option to
+  sort the list of buffers according to some strategy.  For example,
+  sorting by visibility—in the sense that one is first shown hidden
+  buffers, then visible ones, and only then the current buffer—may be
+  preferrable when deciding to switch buffers via consult-buffer.
+
+  Since beframe.el can be used as a consult source (see the manual),
+  endowing beframe--buffer-list with an arbitrary sort function greatly
+  improves the synergy between the two libraries.
+
+ beframe.el | 56 ++++++++++++++++++++++++++++++++++++++++++--------------
+ 1 file changed, 42 insertions(+), 14 deletions(-)
+#+end_quote
+
+The manual explains how this works in practice:
+<https://protesilaos.com/emacs/beframe#h:1c2d3d64-aa7b-4585-a418-ccedbb548b38>.
+Thanks to Tony Zorman for including the reference to the sorting mechanism!
