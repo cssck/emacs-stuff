@@ -1,6 +1,6 @@
-[Desktop Entry]	
-Type=Application
-Name=loginctl
-Exec=/home/aprilsnow/.loginctl
-Comment=Run loginctl script on login
-X-GNOME-Autostart-enabled=true
+  [Desktop Entry]	
+  Type=Application
+  Name=loginctl
+  Exec=/home/aprilsnow/.loginctl
+  Comment=Run loginctl script on login
+  X-GNOME-Autostart-enabled=true

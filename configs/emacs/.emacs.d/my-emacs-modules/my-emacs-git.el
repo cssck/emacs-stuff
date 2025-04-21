@@ -55,7 +55,7 @@
   (setq diff-font-lock-prettify t) ; I think nil is better for patches, but let me try this for a while
   (setq diff-font-lock-syntax 'hunk-also))
 
-;;; Version control framework (vc.el, vc-git.el, and more)
+  ;;; Version control framework (vc.el, vc-git.el, and more)
 (use-package vc
   :ensure nil
   :bind

@@ -1,6 +1,6 @@
-(use-modules (guix ci))
+  (use-modules (guix ci))
 
-(cons* (channel-with-substitutes-available
+  (cons* (channel-with-substitutes-available
 	  %default-guix-channel
 	  "https://ci.guix.gnu.org")
 	 (channel

@@ -1,29 +1,29 @@
-(define-module (aprilsnow packages brogue)
-  #:use-module (guix packages)
-  #:use-module (guix download)
-  #:use-module (guix build-system gnu)
-  #:use-module (guix licenses)
-  #:use-module (guix gexp)
-  #:use-module (gnu packages sdl))
+  (define-module (aprilsnow packages brogue)
+    #:use-module (guix packages)
+    #:use-module (guix download)
+    #:use-module (guix build-system gnu)
+    #:use-module (guix licenses)
+    #:use-module (guix gexp)
+    #:use-module (gnu packages sdl))
 
-(define-public brogue-ce
-  (package
-   (name "brogue-ce")
-   (version "1.13")
-   (source (origin
+  (define-public brogue-ce
+    (package
+     (name "brogue-ce")
+     (version "1.13")
+     (source (origin
 	      (method url-fetch)
 	      (uri (string-append "https://github.com/tmewett/BrogueCE/archive/refs/tags/v" version
 				  ".tar.gz"))
 	      (sha256
 	       (base32
 		"0v4hh5c6lgfrm5gmh2r0c3fnq854i4nqbhmkb9b5hbch74bfjqsc"))))
-   (build-system gnu-build-system)
-   (arguments
-    (list 
-     #:make-flags #~(list "CC=gcc")
-     #:tests? #f
-     #:phases
-     #~(modify-phases %standard-phases
+     (build-system gnu-build-system)
+     (arguments
+      (list 
+       #:make-flags #~(list "CC=gcc")
+       #:tests? #f
+       #:phases
+       #~(modify-phases %standard-phases
 			(delete 'configure)
 			(add-before 'build 'change-datadir-path
 				    (lambda _
@@ -54,8 +54,8 @@
 				    '("adventure" "singleplayer")
 				    #:comment
 				    '((#f "Brave the Dungeons of Doom!"))))))))
-   (inputs (list (sdl-union (list sdl2 sdl2-image))))
-   (synopsis "Brogue CE: A dungeon crawler roguelike")
-   (description "Community fork of Brogue")
-   (home-page "https://github.com/tmewett/BrogueCE")
-   (license agpl3)))
+     (inputs (list (sdl-union (list sdl2 sdl2-image))))
+     (synopsis "Brogue CE: A dungeon crawler roguelike")
+     (description "Community fork of Brogue")
+     (home-page "https://github.com/tmewett/BrogueCE")
+     (license agpl3)))

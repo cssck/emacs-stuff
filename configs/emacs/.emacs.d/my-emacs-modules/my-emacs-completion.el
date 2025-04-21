@@ -199,107 +199,107 @@
   (setq dabbrev-ignored-buffer-modes
         '(archive-mode image-mode docview-mode pdf-view-mode)))
 
-;;;; `abbrev' (Abbreviations, else Abbrevs)
-(use-package abbrev
-  :ensure nil
-  ;; message-mode derives from text-mode, so we don't need a separate
-  ;; hook for it.
-  :hook ((text-mode prog-mode git-commit-mode) . abbrev-mode)
-  :config
-  (setq only-global-abbrevs nil)
+  ;;;; `abbrev' (Abbreviations, else Abbrevs)
+  (use-package abbrev
+    :ensure nil
+    ;; message-mode derives from text-mode, so we don't need a separate
+    ;; hook for it.
+    :hook ((text-mode prog-mode git-commit-mode) . abbrev-mode)
+    :config
+    (setq only-global-abbrevs nil)
 
-  ;; (my-emacs-abbrev global-abbrev-table
-  ;;   "meweb"   "https://protesilaos.com"
-  ;;   "megit"   "https://github.com/protesilaos"
-  ;;   "mehub"   "https://github.com/protesilaos"
-  ;;   "meclone" "git@github.com/protesilaos/"
-  ;;   "melab"   "https://gitlab.com/protesilaos"
-  ;;   "medrive" "hyper://5cr7mxac8o8aymun698736tayrh1h4kbqf359cfk57swjke716gy/"
-  ;;   ";web"   "https://protesilaos.com"
-  ;;   ";git"   "https://github.com/protesilaos"
-  ;;   ";hub"   "https://github.com/protesilaos"
-  ;;   ";clone" "git@github.com/protesilaos/"
-  ;;   ";lab"   "https://gitlab.com/protesilaos"
-  ;;   ";drive" "hyper://5cr7mxac8o8aymun698736tayrh1h4kbqf359cfk57swjke716gy/")
-  ;; 
-  ;; (my-emacs-abbrev text-mode-abbrev-table
-  ;;   "asciidoc"       "AsciiDoc"
-  ;;   "auctex"         "AUCTeX"
-  ;;   "cafe"           "café"
-  ;;   "cliche"         "cliché"
-  ;;   "clojurescript"  "ClojureScript"
-  ;;   "emacsconf"      "EmacsConf"
-  ;;   "github"         "GitHub"
-  ;;   "gitlab"         "GitLab"
-  ;;   "javascript"     "JavaScript"
-  ;;   "latex"          "LaTeX"
-  ;;   "libreplanet"    "LibrePlanet"
-  ;;   "linkedin"       "LinkedIn"
-  ;;   "paypal"         "PayPal"
-  ;;   "sourcehut"      "SourceHut"
-  ;;   "texmacs"        "TeXmacs"
-  ;;   "typescript"     "TypeScript"
-  ;;   "visavis"        "vis-à-vis"
-  ;;   "deja"           "déjà"
-  ;;   "youtube"        "YouTube"
-  ;;   ";up"            "🙃"
-  ;;   ";uni"           "🦄"
-  ;;   ";laugh"         "🤣"
-  ;;   ";smile"         "😀"
-  ;;   ";sun"           "☀️")
+    ;; (my-emacs-abbrev global-abbrev-table
+    ;;   "meweb"   "https://protesilaos.com"
+    ;;   "megit"   "https://github.com/protesilaos"
+    ;;   "mehub"   "https://github.com/protesilaos"
+    ;;   "meclone" "git@github.com/protesilaos/"
+    ;;   "melab"   "https://gitlab.com/protesilaos"
+    ;;   "medrive" "hyper://5cr7mxac8o8aymun698736tayrh1h4kbqf359cfk57swjke716gy/"
+    ;;   ";web"   "https://protesilaos.com"
+    ;;   ";git"   "https://github.com/protesilaos"
+    ;;   ";hub"   "https://github.com/protesilaos"
+    ;;   ";clone" "git@github.com/protesilaos/"
+    ;;   ";lab"   "https://gitlab.com/protesilaos"
+    ;;   ";drive" "hyper://5cr7mxac8o8aymun698736tayrh1h4kbqf359cfk57swjke716gy/")
+    ;; 
+    ;; (my-emacs-abbrev text-mode-abbrev-table
+    ;;   "asciidoc"       "AsciiDoc"
+    ;;   "auctex"         "AUCTeX"
+    ;;   "cafe"           "café"
+    ;;   "cliche"         "cliché"
+    ;;   "clojurescript"  "ClojureScript"
+    ;;   "emacsconf"      "EmacsConf"
+    ;;   "github"         "GitHub"
+    ;;   "gitlab"         "GitLab"
+    ;;   "javascript"     "JavaScript"
+    ;;   "latex"          "LaTeX"
+    ;;   "libreplanet"    "LibrePlanet"
+    ;;   "linkedin"       "LinkedIn"
+    ;;   "paypal"         "PayPal"
+    ;;   "sourcehut"      "SourceHut"
+    ;;   "texmacs"        "TeXmacs"
+    ;;   "typescript"     "TypeScript"
+    ;;   "visavis"        "vis-à-vis"
+    ;;   "deja"           "déjà"
+    ;;   "youtube"        "YouTube"
+    ;;   ";up"            "🙃"
+    ;;   ";uni"           "🦄"
+    ;;   ";laugh"         "🤣"
+    ;;   ";smile"         "😀"
+    ;;   ";sun"           "☀️")
 
-  ;; Allow abbrevs with a prefix colon, semicolon, or underscore.  I demonstrated
-  ;; this here: <https://protesilaos.com/codelog/2024-02-03-emacs-abbrev-mode/>.
-  (abbrev-table-put global-abbrev-table :regexp "\\(?:^\\|[\t\s]+\\)\\(?1:[:;_].*\\|.*\\)")
+    ;; Allow abbrevs with a prefix colon, semicolon, or underscore.  I demonstrated
+    ;; this here: <https://protesilaos.com/codelog/2024-02-03-emacs-abbrev-mode/>.
+    (abbrev-table-put global-abbrev-table :regexp "\\(?:^\\|[\t\s]+\\)\\(?1:[:;_].*\\|.*\\)")
 
-  (with-eval-after-load 'text-mode
-    (abbrev-table-put text-mode-abbrev-table :regexp "\\(?:^\\|[\t\s]+\\)\\(?1:[:;_].*\\|.*\\)"))
+    (with-eval-after-load 'text-mode
+      (abbrev-table-put text-mode-abbrev-table :regexp "\\(?:^\\|[\t\s]+\\)\\(?1:[:;_].*\\|.*\\)"))
 
-  (with-eval-after-load 'org
-    (my-emacs-abbrev org-mode-abbrev-table
-      ";dev" "{{{development-version}}}"
-      ";key" #'my-abbrev-org-macro-key
-      ";cmd" #'my-abbrev-org-macro-key-command)
-    (abbrev-table-put org-mode-abbrev-table :regexp "\\(?:^\\|[\t\s]+\\)\\(?1:[:;_].*\\|.*\\)"))
+    (with-eval-after-load 'org
+      (my-emacs-abbrev org-mode-abbrev-table
+        ";dev" "{{{development-version}}}"
+        ";key" #'my-abbrev-org-macro-key
+        ";cmd" #'my-abbrev-org-macro-key-command)
+      (abbrev-table-put org-mode-abbrev-table :regexp "\\(?:^\\|[\t\s]+\\)\\(?1:[:;_].*\\|.*\\)"))
 
-  (with-eval-after-load 'message
-    (my-emacs-abbrev message-mode-abbrev-table
-      "bestregards"  "Best regards,\nProtesilaos (or simply \"Prot\")"
-      "allthebest"   "All the best,\nProtesilaos (or simply \"Prot\")"
-      "niceday"      "Have a nice day,\nProtesilaos (or simply \"Prot\")"
-      "abest"        "All the best,\nProt"
-      "bregards"     "Best regards,\nProt"
-      "nday"         "Have a nice day,\nProt"
-      "nosrht"       "P.S. I am phasing out SourceHut: <https://protesilaos.com/codelog/2024-01-27-sourcehut-no-more/>.
-Development continues on GitHub with GitLab as a mirror."))
+    (with-eval-after-load 'message
+      (my-emacs-abbrev message-mode-abbrev-table
+        "bestregards"  "Best regards,\nProtesilaos (or simply \"Prot\")"
+        "allthebest"   "All the best,\nProtesilaos (or simply \"Prot\")"
+        "niceday"      "Have a nice day,\nProtesilaos (or simply \"Prot\")"
+        "abest"        "All the best,\nProt"
+        "bregards"     "Best regards,\nProt"
+        "nday"         "Have a nice day,\nProt"
+        "nosrht"       "P.S. I am phasing out SourceHut: <https://protesilaos.com/codelog/2024-01-27-sourcehut-no-more/>.
+  Development continues on GitHub with GitLab as a mirror."))
 
-  ;; The `my-emacs-abbrev' macro, which simplifies how we use
-  ;; `define-abbrev', does not only expand a static text.  It can take
-  ;; a pair of string and function to trigger the latter when the
-  ;; former is inserted.  Think of it like the basis of a simplistic
-  ;; templating system.
-  (require 'my-abbrev)
-  (my-emacs-abbrev global-abbrev-table
-    "metime" #'my-abbrev-current-time
-    "medate" #'my-abbrev-current-date
-    "mejitsi" #'my-abbrev-jitsi-link
-    ";time" #'my-abbrev-current-time
-    ";date" #'my-abbrev-current-date
-    ";jitsi" #'my-abbrev-jitsi-link)
+    ;; The `my-emacs-abbrev' macro, which simplifies how we use
+    ;; `define-abbrev', does not only expand a static text.  It can take
+    ;; a pair of string and function to trigger the latter when the
+    ;; former is inserted.  Think of it like the basis of a simplistic
+    ;; templating system.
+    (require 'my-abbrev)
+    (my-emacs-abbrev global-abbrev-table
+      "metime" #'my-abbrev-current-time
+      "medate" #'my-abbrev-current-date
+      "mejitsi" #'my-abbrev-jitsi-link
+      ";time" #'my-abbrev-current-time
+      ";date" #'my-abbrev-current-date
+      ";jitsi" #'my-abbrev-jitsi-link)
 
-  (my-emacs-abbrev text-mode-abbrev-table
-    ";update" #'my-abbrev-update-html)
+    (my-emacs-abbrev text-mode-abbrev-table
+      ";update" #'my-abbrev-update-html)
 
-  ;; Because the *scratch* buffer is produced before we load this, we
-  ;; have to explicitly activate the mode there.
-  (when-let* ((scratch (get-buffer "*scratch*")))
-    (with-current-buffer scratch
-      (abbrev-mode 1)))
+    ;; Because the *scratch* buffer is produced before we load this, we
+    ;; have to explicitly activate the mode there.
+    (when-let* ((scratch (get-buffer "*scratch*")))
+      (with-current-buffer scratch
+        (abbrev-mode 1)))
 
-  ;; By default, abbrev asks for confirmation on whether to use
-  ;; `abbrev-file-name' to save abbrevations.  I do not need that, nor
-  ;; do I want it.
-  (remove-hook 'save-some-buffers-functions #'abbrev--possibly-save))
+    ;; By default, abbrev asks for confirmation on whether to use
+    ;; `abbrev-file-name' to save abbrevations.  I do not need that, nor
+    ;; do I want it.
+    (remove-hook 'save-some-buffers-functions #'abbrev--possibly-save))
 
 ;;; Corfu (in-buffer completion popup)
 (use-package corfu

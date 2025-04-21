@@ -1,70 +1,70 @@
-;;; Essential configurations
-(use-package emacs
-  :ensure nil
-  :demand t
-  :config
-;;;; General settings and common custom functions (my-simple.el)
-  (setq blink-matching-paren nil)
-  (setq delete-pair-blink-delay 0.1) ; Emacs28 -- see `my-simple-delete-pair-dwim'
-  (setq delete-pair-push-mark t) ; Emacs 31
-  (setq help-window-select t)
-  (setq next-error-recenter '(4)) ; center of the window
-  (setq find-library-include-other-files nil) ; Emacs 29
-  (setq remote-file-name-inhibit-delete-by-moving-to-trash t) ; Emacs 30
-  (setq remote-file-name-inhibit-auto-save t)                 ; Emacs 30
-  (setq tramp-connection-timeout (* 60 10)) ; seconds
-  (setq save-interprogram-paste-before-kill t)
-  (setq mode-require-final-newline 'visit-save)
-  (setq-default truncate-partial-width-windows nil)
-  (setq eval-expression-print-length nil)
-  (setq kill-do-not-save-duplicates t)
-  (setq duplicate-line-final-position -1 ; both are Emacs 29
-        duplicate-region-final-position -1)
-  (setq scroll-error-top-bottom t)
-  (setq echo-keystrokes-help nil) ; Emacs 30
-  (setq epa-keys-select-method 'minibuffer) ; Emacs 30
-  (setq trusted-content '("~/Git/Projects/")) ; Emacs 30
-  ;; Keys I unbind here are either to avoid accidents or to bind them
-  ;; elsewhere later in the configuration.
-  :bind
-  ( :map global-map
-    ("<f2>" . toggle-input-method)  ; F2 overrides that two-column gimmick.  Sorry, but no!
-    ("<insert>" . nil)
-    ("<menu>" . nil)
-    
-    ("C-x C-d" . nil) ; never use it
-    ("C-x C-v" . nil) ; never use it
-    ("C-z" . nil) ; I have a window manager, thanks!
-    ("C-x C-z" . nil) ; same idea as above
-    ("C-x C-c" . nil) ; avoid accidentally exiting Emacs
-    ("C-x C-c C-c" . save-buffers-kill-emacs) ; more cumbersome, less error-prone
-    ("C-x C-r" . restart-emacs) ; override `find-file-read-only'
-    ("C-h h" . nil) ; Never show that "hello" file
-    ("M-`" . nil)
-    ("M-o" . other-window) ; alias for C-x o
-    ("M-SPC" . cycle-spacing)
-    ("M-z" . zap-up-to-char) ; NOT `zap-to-char'
-    ("M-c" . capitalize-dwim)
-    ("M-l" . downcase-dwim) ; "lower" case
-    ("M-u" . upcase-dwim)
-    ("M-=" . count-words)
-    ("C-x O" . next-multiframe-window)
-    ("C-h K" . describe-keymap) ; overrides `Info-goto-emacs-key-command-node'
-    ("C-h u" . apropos-user-option)
-    ("C-h F" . apropos-function) ; lower case is `describe-function'
-    ("C-h V" . apropos-variable) ; lower case is `describe-variable'
-    ("C-h L" . apropos-library) ; lower case is `view-lossage'
-    ("C-h c" . describe-char) ; overrides `describe-key-briefly'
+  ;;; Essential configurations
+  (use-package emacs
+    :ensure nil
+    :demand t
+    :config
+  ;;;; General settings and common custom functions (my-simple.el)
+    (setq blink-matching-paren nil)
+    (setq delete-pair-blink-delay 0.1) ; Emacs28 -- see `my-simple-delete-pair-dwim'
+    (setq delete-pair-push-mark t) ; Emacs 31
+    (setq help-window-select t)
+    (setq next-error-recenter '(4)) ; center of the window
+    (setq find-library-include-other-files nil) ; Emacs 29
+    (setq remote-file-name-inhibit-delete-by-moving-to-trash t) ; Emacs 30
+    (setq remote-file-name-inhibit-auto-save t)                 ; Emacs 30
+    (setq tramp-connection-timeout (* 60 10)) ; seconds
+    (setq save-interprogram-paste-before-kill t)
+    (setq mode-require-final-newline 'visit-save)
+    (setq-default truncate-partial-width-windows nil)
+    (setq eval-expression-print-length nil)
+    (setq kill-do-not-save-duplicates t)
+    (setq duplicate-line-final-position -1 ; both are Emacs 29
+          duplicate-region-final-position -1)
+    (setq scroll-error-top-bottom t)
+    (setq echo-keystrokes-help nil) ; Emacs 30
+    (setq epa-keys-select-method 'minibuffer) ; Emacs 30
+    (setq trusted-content '("~/Git/Projects/")) ; Emacs 30
+    ;; Keys I unbind here are either to avoid accidents or to bind them
+    ;; elsewhere later in the configuration.
+    :bind
+    ( :map global-map
+      ("<f2>" . toggle-input-method)  ; F2 overrides that two-column gimmick.  Sorry, but no!
+      ("<insert>" . nil)
+      ("<menu>" . nil)
+      
+      ("C-x C-d" . nil) ; never use it
+      ("C-x C-v" . nil) ; never use it
+      ("C-z" . nil) ; I have a window manager, thanks!
+      ("C-x C-z" . nil) ; same idea as above
+      ("C-x C-c" . nil) ; avoid accidentally exiting Emacs
+      ("C-x C-c C-c" . save-buffers-kill-emacs) ; more cumbersome, less error-prone
+      ("C-x C-r" . restart-emacs) ; override `find-file-read-only'
+      ("C-h h" . nil) ; Never show that "hello" file
+      ("M-`" . nil)
+      ("M-o" . other-window) ; alias for C-x o
+      ("M-SPC" . cycle-spacing)
+      ("M-z" . zap-up-to-char) ; NOT `zap-to-char'
+      ("M-c" . capitalize-dwim)
+      ("M-l" . downcase-dwim) ; "lower" case
+      ("M-u" . upcase-dwim)
+      ("M-=" . count-words)
+      ("C-x O" . next-multiframe-window)
+      ("C-h K" . describe-keymap) ; overrides `Info-goto-emacs-key-command-node'
+      ("C-h u" . apropos-user-option)
+      ("C-h F" . apropos-function) ; lower case is `describe-function'
+      ("C-h V" . apropos-variable) ; lower case is `describe-variable'
+      ("C-h L" . apropos-library) ; lower case is `view-lossage'
+      ("C-h c" . describe-char) ; overrides `describe-key-briefly'
 
-    :map prog-mode-map
-    ("C-M-d" . up-list) ; confusing name for what looks like "down" to me
-    ("<C-M-backspace>" . backward-kill-sexp)
+      :map prog-mode-map
+      ("C-M-d" . up-list) ; confusing name for what looks like "down" to me
+      ("<C-M-backspace>" . backward-kill-sexp)
 
-    ;; Keymap for buffers (Emacs28)
-    :map ctl-x-x-map
-    ("f" . follow-mode)  ; override `font-lock-update'
-    ("r" . rename-uniquely)
-    ("l" . visual-line-mode)))
+      ;; Keymap for buffers (Emacs28)
+      :map ctl-x-x-map
+      ("f" . follow-mode)  ; override `font-lock-update'
+      ("r" . rename-uniquely)
+      ("l" . visual-line-mode)))
 
 (use-package my-common
   :ensure nil
@@ -490,72 +490,64 @@ word.  Fall back to regular `expreg-expand'."
  :ensure t
  :commands (pass))
 
-;;; Shell (M-x shell)
-(use-package shell
-  :ensure nil
-  :bind
-  ( :map shell-mode-map
-    ("C-c C-k" . comint-clear-buffer)
-    ("C-c C-w" . comint-write-output))
-  :config
-  ;; Check my .bashrc which handles `comint-terminfo-terminal':
-  ;;
-  ;; # Default pager.  The check for the terminal is useful for Emacs with
-  ;; # M-x shell (which is how I usually interact with bash these days).
-  ;; #
-  ;; # The COLORTERM is documented in (info "(emacs) General Variables").
-  ;; # I found the reference to `dumb-emacs-ansi' in (info "(emacs)
-  ;; # Connection Variables").
-  ;; if [ "$TERM" = "dumb" ] && [ "$INSIDE_EMACS" ] || [ "$TERM" = "dumb-emacs-ansi" ] && [ "$INSIDE_EMACS" ]
-  ;; then
-  ;;     export PAGER="cat"
-  ;;     alias less="cat"
-  ;;     export TERM=dumb-emacs-ansi
-  ;;     export COLORTERM=1
-  ;; else
-  ;;     # Quit once you try to scroll past the end of the file.
-  ;;     export PAGER="less --quit-at-eof"
-  ;; fi
+  ;;; Shell (M-x shell)
+  (use-package shell
+    :ensure nil
+    :bind
+    ( :map shell-mode-map
+      ("C-c C-k" . comint-clear-buffer)
+      ("C-c C-w" . comint-write-output))
+    :config
+    ;; Check my .bashrc which handles `comint-terminfo-terminal':
+    ;;
+    ;; # Default pager.  The check for the terminal is useful for Emacs with
+    ;; # M-x shell (which is how I usually interact with bash these days).
+    ;; #
+    ;; # The COLORTERM is documented in (info "(emacs) General Variables").
+    ;; # I found the reference to `dumb-emacs-ansi' in (info "(emacs)
+    ;; # Connection Variables").
+    ;; if [ "$TERM" = "dumb" ] && [ "$INSIDE_EMACS" ] || [ "$TERM" = "dumb-emacs-ansi" ] && [ "$INSIDE_EMACS" ]
+    ;; then
+    ;;     export PAGER="cat"
+    ;;     alias less="cat"
+    ;;     export TERM=dumb-emacs-ansi
+    ;;     export COLORTERM=1
+    ;; else
+    ;;     # Quit once you try to scroll past the end of the file.
+    ;;     export PAGER="less --quit-at-eof"
+    ;; fi
 
-  (setq shell-command-prompt-show-cwd t) ; Emacs 27.1
-  (setq ansi-color-for-comint-mode t)
-  (setq shell-input-autoexpand 'input)
-  (setq shell-highlight-undef-enable t) ; Emacs 29.1
-  (setq shell-has-auto-cd nil) ; Emacs 29.1
-  (setq shell-get-old-input-include-continuation-lines t) ; Emacs 30.1
-  (setq shell-kill-buffer-on-exit t) ; Emacs 29.1
-  (setq shell-completion-fignore '("~" "#" "%"))
-  (setq-default comint-scroll-to-bottom-on-input t)
-  (setq-default comint-scroll-to-bottom-on-output nil)
-  (setq-default comint-input-autoexpand 'input)
-  (setq comint-prompt-read-only t)
-  (setq comint-buffer-maximum-size 9999)
-  (setq comint-completion-autolist t)
-  (setq comint-input-ignoredups t)
-  (setq tramp-default-remote-shell "/bin/bash")
+    (setq shell-command-prompt-show-cwd t) ; Emacs 27.1
+    (setq ansi-color-for-comint-mode t)
+    (setq shell-input-autoexpand 'input)
+    (setq shell-highlight-undef-enable t) ; Emacs 29.1
+    (setq shell-has-auto-cd nil) ; Emacs 29.1
+    (setq shell-get-old-input-include-continuation-lines t) ; Emacs 30.1
+    (setq shell-kill-buffer-on-exit t) ; Emacs 29.1
+    (setq shell-completion-fignore '("~" "#" "%"))
+    (setq-default comint-scroll-to-bottom-on-input t)
+    (setq-default comint-scroll-to-bottom-on-output nil)
+    (setq-default comint-input-autoexpand 'input)
+    (setq comint-prompt-read-only t)
+    (setq comint-buffer-maximum-size 9999)
+    (setq comint-completion-autolist t)
+    (setq comint-input-ignoredups t)
+    (setq tramp-default-remote-shell "/bin/bash")
 
-  (setq shell-font-lock-keywords
-        '(("[ \t]\\([+-][^ \t\n]+\\)" 1 font-lock-builtin-face)
-          ("^[^ \t\n]+:.*" . font-lock-string-face)
-          ("^\\[[1-9][0-9]*\\]" . font-lock-constant-face)))
+    (setq shell-font-lock-keywords
+          '(("[ \t]\\([+-][^ \t\n]+\\)" 1 font-lock-builtin-face)
+            ("^[^ \t\n]+:.*" . font-lock-string-face)
+            ("^\\[[1-9][0-9]*\\]" . font-lock-constant-face)))
 
-  ;; Support for OS-specific escape sequences such as what `ls
-  ;; --hyperlink' uses.  I normally don't use those, but I am checking
-  ;; this to see if there are any obvious advantages/disadvantages.
-  (add-hook 'comint-output-filter-functions 'comint-osc-process-output))
+    ;; Support for OS-specific escape sequences such as what `ls
+    ;; --hyperlink' uses.  I normally don't use those, but I am checking
+    ;; this to see if there are any obvious advantages/disadvantages.
+    (add-hook 'comint-output-filter-functions 'comint-osc-process-output))
 
-(use-package my-shell
-  :ensure nil
-  :bind (("<f1>" . my-shell)) ; I don't use F1 for help commands
-  :hook (shell-mode . my-shell-mode))
-
-(defun new-vterm ()
-  (interactive)
-  (let ((current-prefix-arg '(4))) ;; emulate C-u
-    (call-interactively 'vterm)))
-
-(when (not use-exwm)
-  (define-key my/keys-keymap (kbd "C-<return>") 'new-vterm))
+  (use-package my-shell
+    :ensure nil
+    :bind (("<f1>" . my-shell)) ; I don't use F1 for help commands
+    :hook (shell-mode . my-shell-mode))
 
 ;;; Laptop settings
 (unless (directory-empty-p "/sys/class/power_supply/")
@@ -581,68 +573,68 @@ word.  Fall back to regular `expreg-expand'."
              apheleia-global-mode)
   :hook ((prog-mode . apheleia-mode)))
 
-(use-package helpful
-  :ensure t
-  :defer t
-  :commands (helpful-callable
-             helpful-variable
-             helpful-key
-             helpful-command
-             helpful-at-point
-             helpful-function)
-  :bind
-  ([remap describe-command] . helpful-command)
-  ([remap describe-function] . helpful-callable)
-  ([remap describe-key] . helpful-key)
-  ([remap describe-symbol] . helpful-symbol)
-  ([remap describe-variable] . helpful-variable)
-  :custom
-  (helpful-max-buffers 7))
+  (use-package helpful
+    :ensure t
+    :defer t
+    :commands (helpful-callable
+               helpful-variable
+               helpful-key
+               helpful-command
+               helpful-at-point
+               helpful-function)
+    :bind
+    ([remap describe-command] . helpful-command)
+    ([remap describe-function] . helpful-callable)
+    ([remap describe-key] . helpful-key)
+    ([remap describe-symbol] . helpful-symbol)
+    ([remap describe-variable] . helpful-variable)
+    :custom
+    (helpful-max-buffers 7))
 
-(use-package ibuffer
-  :ensure nil
-  :init
-  (setq ibuffer-expert t)
-  (setq ibuffer-show-empty-filter-groups nil)
-  (setq ibuffer-saved-filter-groups
-        '(("Main"
-           ("Directories" (mode . dired-mode))
-           ("Rest" (mode . restclient-mode))
-           ("Docker" (or
-                      (mode . docker-compose-mode)
-                      (mode . dockerfile-mode)))
-           ("Programming" (or
-                           (mode . clojure-mode)
-                           (mode . emacs-lisp-mode)
-                           (mode . sql-mode)
-                           (mode . python-mode)))
-           ("Browser" (or
-                       (name . "qutebrowser:\*")
-                       (name . "zen:\*")
-                       ))
-           ("Org" (mode . org-mode))
-           ("Markdown" (or
-                        (mode . markdown-mode)
-                        (mode . gfm-mode)))
-           ("Git" (or
-                   (mode . magit-blame-mode)
-                   (mode . magit-cherry-mode)
-                   (mode . magit-diff-mode)
-                   (mode . magit-log-mode)
-                   (mode . magit-process-mode)
-                   (mode . magit-status-mode)))
-           ("Emacs" (or
-                     (name . "^\\*Help\\*$")
-                     (name . "^\\*Custom.*")
-                     (name . "^\\*Org Agenda\\*$")
-                     (name . "^\\*info\\*$")
-                     (name . "^\\*scratch\\*$")
-                     (name . "^\\*Backtrace\\*$")
-                     (name . "^\\*Messages\\*$"))))))
-  :config
-  (add-hook 'ibuffer-mode-hook
-            (lambda ()
-              (ibuffer-auto-mode 1)
-              (ibuffer-switch-to-saved-filter-groups "Main"))))
+     (use-package ibuffer
+       :ensure nil
+       :init
+       (setq ibuffer-expert t)
+       (setq ibuffer-show-empty-filter-groups nil)
+       (setq ibuffer-saved-filter-groups
+             '(("Main"
+                ("Directories" (mode . dired-mode))
+                ("Rest" (mode . restclient-mode))
+                ("Docker" (or
+                           (mode . docker-compose-mode)
+                           (mode . dockerfile-mode)))
+                ("Programming" (or
+                                (mode . clojure-mode)
+                                (mode . emacs-lisp-mode)
+                                (mode . sql-mode)
+                                (mode . python-mode)))
+                ("Browser" (or
+                            (name . "qutebrowser:\*")
+                            (name . "zen:\*")
+                            ))
+                ("Org" (mode . org-mode))
+                ("Markdown" (or
+                             (mode . markdown-mode)
+                             (mode . gfm-mode)))
+                ("Git" (or
+                        (mode . magit-blame-mode)
+                        (mode . magit-cherry-mode)
+                        (mode . magit-diff-mode)
+                        (mode . magit-log-mode)
+                        (mode . magit-process-mode)
+                        (mode . magit-status-mode)))
+                ("Emacs" (or
+                          (name . "^\\*Help\\*$")
+                          (name . "^\\*Custom.*")
+                          (name . "^\\*Org Agenda\\*$")
+                          (name . "^\\*info\\*$")
+                          (name . "^\\*scratch\\*$")
+                          (name . "^\\*Backtrace\\*$")
+                          (name . "^\\*Messages\\*$"))))))
+       :config
+       (add-hook 'ibuffer-mode-hook
+                 (lambda ()
+                   (ibuffer-auto-mode 1)
+                   (ibuffer-switch-to-saved-filter-groups "Main"))))
 
 (provide 'my-emacs-essentials)

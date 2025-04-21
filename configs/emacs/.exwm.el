@@ -1,58 +1,58 @@
-(unless (package-installed-p 'exwm)
-  (package-install 'exwm))
+  (unless (package-installed-p 'exwm)
+    (package-install 'exwm))
 
-(require 'exwm)
-(require 'exwm-config)
-(exwm-config-default)
-(require 'exwm-systemtray)
-(exwm-systemtray-enable)
-(setq exwm-systemtray-height 16)
-(setq exwm-layout-show-all-buffers t)
-(setq exwm-workspace-show-all-buffers t)
-(setq exwm-workspace-number 4)
-(display-time-mode 1)
-(setq display-time-24hr-format t)
-(call-process "/usr/bin/bash" "~/.loginctl")
+  (require 'exwm)
+  (require 'exwm-config)
+  (exwm-config-default)
+  (require 'exwm-systemtray)
+  (exwm-systemtray-enable)
+  (setq exwm-systemtray-height 16)
+  (setq exwm-layout-show-all-buffers t)
+  (setq exwm-workspace-show-all-buffers t)
+  (setq exwm-workspace-number 4)
+  (display-time-mode 1)
+  (setq display-time-24hr-format t)
+  (call-process "/usr/bin/bash" "~/.loginctl")
 
-(defun new-vterm-exwm ()
-  (interactive)
-  (let ((current-prefix-arg '(4))) ;; emulate C-u
-    (call-interactively 'vterm)))
+  (defun new-vterm-exwm ()
+    (interactive)
+    (let ((current-prefix-arg '(4))) ;; emulate C-u
+      (call-interactively 'vterm)))
 
-(defun exwm-move-window-to-workspace (workspace-number)
-  (interactive)
-  (let ((frame (exwm-workspace--workspace-from-frame-or-index workspace-number))
+  (defun exwm-move-window-to-workspace (workspace-number)
+    (interactive)
+    (let ((frame (exwm-workspace--workspace-from-frame-or-index workspace-number))
 	  (id (exwm--buffer->id (window-buffer))))
-    (exwm-workspace-move-window frame id)))
+      (exwm-workspace-move-window frame id)))
 
 
-(defmacro exwm-set-key-progn (key &rest body)
-  `(exwm-input-set-key (kbd ,key)
+  (defmacro exwm-set-key-progn (key &rest body)
+    `(exwm-input-set-key (kbd ,key)
 			 (lambda()
 			   ,@body)))
 
-(defmacro exwm-key-to-workspace (key workspace)
-  `(exwm-set-key-progn ,key
+  (defmacro exwm-key-to-workspace (key workspace)
+    `(exwm-set-key-progn ,key
 			 (interactive)
 			 (exwm-workspace-switch ,workspace)))
 
-(defmacro exwm-key-send-to-workspace (key workspace)
-  `(exwm-set-key-progn ,key
+  (defmacro exwm-key-send-to-workspace (key workspace)
+    `(exwm-set-key-progn ,key
 			 (interactive)
 			 (exwm-move-window-to-workspace ,workspace)))
 
-(defmacro exwm-key-to-command (key command)
-  `(exwm-set-key-progn ,key
+  (defmacro exwm-key-to-command (key command)
+    `(exwm-set-key-progn ,key
 			 (interactive)
 			 (start-process-shell-command ,command nil ,command)))
 
-(defun my-kill-buffer-and-window ()
-  "Kill the current buffer and delete the selected window."
-  (interactive)
-  (let ((window-to-delete (selected-window))
+  (defun my-kill-buffer-and-window ()
+    "Kill the current buffer and delete the selected window."
+    (interactive)
+    (let ((window-to-delete (selected-window))
 	  (buffer-to-kill (current-buffer))
 	  (delete-window-hook (lambda () (ignore-errors (delete-window)))))
-    (unwind-protect
+      (unwind-protect
 	  (progn
 	    (add-hook 'kill-buffer-hook delete-window-hook t t)
 	    (if (kill-buffer (current-buffer))
@@ -169,6 +169,6 @@
 ;; (exwm-key-to-command "<XF86AudioMute>" "pamixer -t")
 ;; (exwm-key-to-command "s-<f6>" "pamixer --default-source -t")
 
-(push ?\s-  exwm-input-prefix-keys)
+  (push ?\s-  exwm-input-prefix-keys)
 
-(push (kbd "<escape>") exwm-input-prefix-keys)
+  (push (kbd "<escape>") exwm-input-prefix-keys)

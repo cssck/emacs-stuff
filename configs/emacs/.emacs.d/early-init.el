@@ -1,5 +1,5 @@
-;; (setq debug-on-error t)
-  (require 'cl-seq)
+  ;; (setq debug-on-error t)
+    (require 'cl-seq)
 
 ;; Ensure Emacs loads the most recent byte-compiled files.
 (setq load-prefer-newer t)

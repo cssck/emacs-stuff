@@ -1283,7 +1283,7 @@ And the final few services.
 	   (libvirt-configuration
 	    (unix-sock-group "libvirt")
 	    (tls-port "16555")))
-
+  (service containerd-service-type)
   (service docker-service-type)
 
   (service zram-device-service-type
@@ -1312,7 +1312,7 @@ At last we can configure hardware-level stuff - bootloader and drives. Finally w
    (source (uuid "0da908ca-849a-40e4-a052-a9eceda16148"))
    (target "cryptswap")
    (type luks-device-mapping))))
-))
+
 
 (file-systems (cons* (file-system
 			          (mount-point "/boot/efi")
@@ -1320,21 +1320,18 @@ At last we can configure hardware-level stuff - bootloader and drives. Finally w
 				                    'fat32))
 			          (type "vfat"))
 
-;; Root Filesystem inside LVM
-(file-system
- (mount-point "/")
- (device "/dev/mapper/data-root")
- (type "ext4")
- (dependencies (list "cryptdata")))
+                     ;; Root Filesystem inside LVM
+                     (file-system
+                      (mount-point "/")
+                      (device "/dev/mapper/data-root")
+                      (type "ext4")
+                      (dependencies (list "cryptdata")))
 
-;; Optional: swap
-(file-system
- (mount-point "none")
- (device "/dev/mapper/cryptswap")
- (type "swap")
- (dependencies (list "cryptswap")))
-
-%base-file-systems)))
+                     %base-file-systems))
+(swap-devices
+ (list
+  (swap-space
+   (target "/dev/mapper/cryptswap")))))
 #+END_SRC
 
 ** /etc/guix-systems/signing-key.pub
@@ -5246,14 +5243,6 @@ Now the actual configurations:
     :ensure nil
     :bind (("<f1>" . my-shell)) ; I don't use F1 for help commands
     :hook (shell-mode . my-shell-mode))
-
-  (defun new-vterm ()
-    (interactive)
-    (let ((current-prefix-arg '(4))) ;; emulate C-u
-      (call-interactively 'vterm)))
-
-  (when (not use-exwm)
-    (define-key my/keys-keymap (kbd "C-<return>") 'new-vterm))  
 #+end_src
 
 **** The =my-emacs-essentials.el= section about the laptop-specific settings

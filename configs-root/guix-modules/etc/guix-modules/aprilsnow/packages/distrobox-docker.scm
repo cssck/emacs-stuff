@@ -1,22 +1,22 @@
-(define-module (aprilsnow packages distrobox-docker)
-  #:use-module (guix gexp)
-  #:use-module (gnu packages)
-  #:use-module (guix packages)
-  #:use-module (gnu packages docker)
-  #:use-module (guix utils)
-  #:use-module (guix build utils)
-  #:use-module (gnu packages containers))
+  (define-module (aprilsnow packages distrobox-docker)
+    #:use-module (guix gexp)
+    #:use-module (gnu packages)
+    #:use-module (guix packages)
+    #:use-module (gnu packages docker)
+    #:use-module (guix utils)
+    #:use-module (guix build utils)
+    #:use-module (gnu packages containers))
 
-(define-public distrobox-docker
-  (package
-   (inherit distrobox)
-   (name "distrobox-docker")
-   (inputs (modify-inputs (package-inputs distrobox)
+  (define-public distrobox-docker
+    (package
+     (inherit distrobox)
+     (name "distrobox-docker")
+     (inputs (modify-inputs (package-inputs distrobox)
 			    (append docker)
 			    (append docker-cli)
 			    (delete "podman")))
-   (arguments
-    (substitute-keyword-arguments (package-arguments distrobox)
+     (arguments
+      (substitute-keyword-arguments (package-arguments distrobox)
 				    ((#:phases phases)
 				     #~(modify-phases #$phases
 						      (replace 'wrap-scripts
