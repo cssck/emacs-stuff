@@ -1,4 +1,4 @@
-  (add-to-load-path "/etc/guix-modules")
+(add-to-load-path "/etc/guix-modules")
 
 (use-modules (gnu)
 	         (gnu services)
@@ -33,17 +33,17 @@
 (use-service-modules linux desktop networking ssh xorg)
 (use-package-modules linux package-management)
 
-  (define (extract-propagated-inputs package)
-    ;; Drop input labels.  Attempt to support outputs.
-    (map
-     (match-lambda
-       ((_ (? package? pkg)) pkg)
-       ((_ (? package? pkg) output) (list pkg output)))
-     (package-propagated-inputs package)))
+(define (extract-propagated-inputs package)
+  ;; Drop input labels.  Attempt to support outputs.
+  (map
+   (match-lambda
+     ((_ (? package? pkg)) pkg)
+     ((_ (? package? pkg) output) (list pkg output)))
+   (package-propagated-inputs package)))
 
-  (define %my-services
-    (modify-services %desktop-services
-      (guix-service-type config => (guix-configuration
+(define %my-services
+  (modify-services %desktop-services
+    (guix-service-type config => (guix-configuration
 				    (inherit config)
 				    (substitute-urls
 				     (append (list "https://substitutes.nonguix.org")
@@ -51,17 +51,17 @@
 				    (authorized-keys
 				     (append (list (local-file "./signing-key.pub"))
 					     %default-authorized-guix-keys))))
-      (gdm-service-type config => 
-      		     (gdm-configuration
-      		      (inherit config)
-      		      (wayland? #f)
-      		      (default-user "aprilsnow")
-       		      (auto-login? #t)))
-      (dbus-root-service-type config =>
+    (gdm-service-type config => 
+    		     (gdm-configuration
+    		      (inherit config)
+    		      (wayland? #f)
+    		      (default-user "aprilsnow")
+     		      (auto-login? #t)))
+    (dbus-root-service-type config =>
 			      (dbus-configuration (inherit config)
 						  (services (list libratbag blueman fwupd))))))
 
-  (define my-username "aprilsnow")
+(define my-username "aprilsnow")
 
 (operating-system
 
@@ -75,17 +75,17 @@
 
  (host-name "normandy")
 
-  (kernel linux)
-  (initrd microcode-initrd)
-  (firmware (list linux-firmware))
+(kernel linux)
+(initrd microcode-initrd)
+(firmware (list linux-firmware))
 
-  (groups 
-   (cons* 
-    (user-group (name "games")) ;; For libratbagd
-    (user-group (name "realtime"))
-    %base-groups))
+(groups 
+ (cons* 
+  (user-group (name "games")) ;; For libratbagd
+  (user-group (name "realtime"))
+  %base-groups))
 
-  (users (cons* (user-account
+(users (cons* (user-account
 		 (name my-username)
 		 (comment "四月雪")
 		 (group "users")
@@ -94,9 +94,9 @@
 		  '("wheel" "netdev" "audio" "video" "lp" "libvirt" "kvm" "games" "docker" "realtime")))
 		%base-user-accounts))
 
-  (packages
-   (append
-    (map specification->package
+(packages
+ (append
+  (map specification->package
 	 (list
 	  "bluez"
 	  "openssh"
@@ -109,29 +109,29 @@
 	  "i3lock"
 	  "libratbag"
 	  "git"))
-    %base-packages))
+  %base-packages))
 
-  (name-service-switch %mdns-host-lookup-nss)
+(name-service-switch %mdns-host-lookup-nss)
 
-  (services
-   (append
-    (list
-     ;; (service gnome-desktop-service-type
-     ;; 	    (gnome-desktop-configuration
-     ;; 	     (shell (extract-propagated-inputs gnome-meta-core-shell-patched))))
-     ;; Enable triple buffering support
-     ;; I'm sure there's a more proper way to approach this, but this works for now
-     (service xfce-desktop-service-type)
+(services
+ (append
+  (list
+   ;; (service gnome-desktop-service-type
+   ;; 	    (gnome-desktop-configuration
+   ;; 	     (shell (extract-propagated-inputs gnome-meta-core-shell-patched))))
+   ;; Enable triple buffering support
+   ;; I'm sure there's a more proper way to approach this, but this works for now
+   (service xfce-desktop-service-type)
 
-     (service openssh-service-type)
+   (service openssh-service-type)
 
-     ;; Not necessary for Gnome
-     (service screen-locker-service-type
+   ;; Not necessary for Gnome
+   (service screen-locker-service-type
 	      (screen-locker-configuration
 	       (name "i3lock")
 	       (program (file-append i3lock "/bin/i3lock"))))
 
-     (service tlp-service-type
+   (service tlp-service-type
 	      (tlp-configuration
 	       (tlp-enable? #t)
 	       (cpu-scaling-governor-on-ac (list "performance"))
@@ -144,55 +144,55 @@
 	       (start-charge-thresh-bat1 70)
 	       (stop-charge-thresh-bat1 75)))
 
-     (service bluetooth-service-type
+   (service bluetooth-service-type
 	      (bluetooth-configuration
 	       (auto-enable? #f)))
 
-  (service throttled-service-type)
+(service throttled-service-type)
 
-  (service kernel-module-loader-service-type
+(service kernel-module-loader-service-type
 	   '("msr")) ;; required for throttled
 
-  mount-rshared-service
+mount-rshared-service
 
-  (extra-special-file "/etc/subuid"
+(extra-special-file "/etc/subuid"
 		      (plain-file "subuid" (string-append my-username ":100000:65536")))
 
-  (extra-special-file "/etc/subgid"
+(extra-special-file "/etc/subgid"
 		      (plain-file "subgid" (string-append my-username ":100000:65536")))
 
-  virsh-net-default-service
+virsh-net-default-service
 
-  (service pam-limits-service-type
+(service pam-limits-service-type
 	   (list (pam-limits-entry "*" 'hard 'nofile 524288)
 		 (pam-limits-entry "@realtime" 'both 'rtprio 99)
 		 (pam-limits-entry "@realtime" 'both 'memlock 'unlimited)))
 
-  (service nftables-service-type)
+(service nftables-service-type)
 
-  (extra-special-file "/lib64/ld-linux-x86-64.so.2"
+(extra-special-file "/lib64/ld-linux-x86-64.so.2"
 		      (file-append glibc "/lib/ld-linux-x86-64.so.2"))
 
-  (set-xorg-configuration
-   (xorg-configuration
-    (keyboard-layout keyboard-layout)))
+(set-xorg-configuration
+ (xorg-configuration
+  (keyboard-layout keyboard-layout)))
 
-  (service virtlog-service-type
+(service virtlog-service-type
 	   (virtlog-configuration
 	    (max-clients 1000)))
 
-  (service libvirt-service-type
+(service libvirt-service-type
 	   (libvirt-configuration
 	    (unix-sock-group "libvirt")
 	    (tls-port "16555")))
 
-  (service docker-service-type)
+(service docker-service-type)
 
-  (service zram-device-service-type
+(service zram-device-service-type
 	   (zram-device-configuration
 	    (size "8172M")
 	    (compression-algorithm 'zstd))))
-  %my-services))
+%my-services))
 
 (bootloader (bootloader-configuration
 	         (bootloader grub-efi-bootloader)

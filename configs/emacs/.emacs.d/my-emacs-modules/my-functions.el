@@ -1,4 +1,4 @@
-  (defun my-kill-buffer-and-window ()
+(defun my-kill-buffer-and-window ()
     "Kill the current buffer and delete the selected window."
     (interactive)
     (let ((window-to-delete (selected-window))

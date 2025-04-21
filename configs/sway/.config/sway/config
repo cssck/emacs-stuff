@@ -1,19 +1,19 @@
-  set $mod Mod4
-  set $HOME /home/aprilsnow
-  #set $term emacsclient -c -e "(let ((current-prefix-arg '(4))) (call-interactively 'vterm))"
-  set $term xfce4-terminal
-  # set $files emacsclient -c -e '(dired "~")'
-  set $files thunar
-  set $wallpaper $HOME/.local/share/wallpapers/deijurj-adfa3118-4bd6-4350-b9db-43d4d835536c.jpg
-  set $lock swaylock -i $wallpaper
-  set $scr_off swaymsg "output * dpms off"
-  set $scr_on swaymsg "output * dpms on"
-  font pango:Aporetic Sans Mono 9
-  gaps inner 8px
-  for_window [class="^.*"] border pixel 2
-  floating_modifier $mod
-  seat seat0 xcursor_theme Breeze_Snow
-  # tiling_drag modifier titlebar
+set $mod Mod4
+set $HOME /home/aprilsnow
+#set $term emacsclient -c -e "(let ((current-prefix-arg '(4))) (call-interactively 'vterm))"
+set $term xfce4-terminal
+# set $files emacsclient -c -e '(dired "~")'
+set $files thunar
+set $wallpaper $HOME/.local/share/wallpapers/deijurj-adfa3118-4bd6-4350-b9db-43d4d835536c.jpg
+set $lock swaylock -i $wallpaper
+set $scr_off swaymsg "output * dpms off"
+set $scr_on swaymsg "output * dpms on"
+font pango:Aporetic Sans Mono 9
+gaps inner 8px
+for_window [class="^.*"] border pixel 2
+floating_modifier $mod
+seat seat0 xcursor_theme Breeze_Snow
+# tiling_drag modifier titlebar
 
 input * {
     xkb_layout "us,ua"
@@ -23,90 +23,90 @@ input * {
   xkb_numlock enabled
 }
 
-  for_window [app_id="thunar"] opacity 0.96
+for_window [app_id="thunar"] opacity 0.96
 
-  # output HDMI-A-2 max_render_time 12
-  # output HDMI-A-1 disable
-  # swaymsg -t get_outputs
+# output HDMI-A-2 max_render_time 12
+# output HDMI-A-1 disable
+# swaymsg -t get_outputs
 
-  exec dbus-update-activation-environment DISPLAY WAYLAND_DISPLAY SWAYSOCK
-  exec --no-startup-id $HOME/.loginctl
-  exec --no-startup-id swaybg -i $wallpaper
-  exec --no-startup-id gsettings set org.gnome.desktop.interface gtk-theme Yaru-magenta-dark
-  exec --no-startup-id gsettings set org.gnome.desktop.interface icon-theme Yaru-magenta-dark
-  # exec /usr/libexec/polkit-gnome-authentication-agent-1
+exec dbus-update-activation-environment DISPLAY WAYLAND_DISPLAY SWAYSOCK
+exec --no-startup-id $HOME/.loginctl
+exec --no-startup-id swaybg -i $wallpaper
+exec --no-startup-id gsettings set org.gnome.desktop.interface gtk-theme Yaru-magenta-dark
+exec --no-startup-id gsettings set org.gnome.desktop.interface icon-theme Yaru-magenta-dark
+# exec /usr/libexec/polkit-gnome-authentication-agent-1
 
-  exec --no-startup-id swayidle timeout 480 '$lock' timeout 600 '$scr_off' resume '$scr_on'
+exec --no-startup-id swayidle timeout 480 '$lock' timeout 600 '$scr_off' resume '$scr_on'
 
-  set $refresh_i3status killall -SIGUSR1 i3status
-  bindsym XF86AudioRaiseVolume exec --no-startup-id pamixer -i 10
-  bindsym XF86AudioLowerVolume exec --no-startup-id pamixer -d 10
-  bindsym XF86AudioMute exec --no-startup-id pamixer -t
-  bindsym XF86AudioMicMute exec --no-startup-id pactl set-source-mute @DEFAULT_SOURCE@ toggle
-  bindsym Print exec --no-startup-id $HOME/.bin/scr
-  bindsym Shift+Print exec --no-startup-id $HOME/.bin/scr-area
+set $refresh_i3status killall -SIGUSR1 i3status
+bindsym XF86AudioRaiseVolume exec --no-startup-id pamixer -i 10
+bindsym XF86AudioLowerVolume exec --no-startup-id pamixer -d 10
+bindsym XF86AudioMute exec --no-startup-id pamixer -t
+bindsym XF86AudioMicMute exec --no-startup-id pactl set-source-mute @DEFAULT_SOURCE@ toggle
+bindsym Print exec --no-startup-id $HOME/.bin/scr
+bindsym Shift+Print exec --no-startup-id $HOME/.bin/scr-area
 
-  bindsym $mod+Return exec $term
-  bindsym $mod+q kill
+bindsym $mod+Return exec $term
+bindsym $mod+q kill
 
-  bindsym $mod+Shift+Control+l exec --no-startup-id $lock
+bindsym $mod+Shift+Control+l exec --no-startup-id $lock
 
-  bindsym $mod+d exec --no-startup-id rofi -theme ~/.config/wofi/nord.rasi -show drun
-  bindsym $mod+b exec --no-startup-id rofi -theme ~/.config/wofi/nord.rasi -show window
+bindsym $mod+d exec --no-startup-id rofi -theme ~/.config/wofi/nord.rasi -show drun
+bindsym $mod+b exec --no-startup-id rofi -theme ~/.config/wofi/nord.rasi -show window
 
-  bindsym $mod+e exec --no-startup-id emacsclient -c
-  bindsym $mod+a exec --no-startup-id $files
+bindsym $mod+e exec --no-startup-id emacsclient -c
+bindsym $mod+a exec --no-startup-id $files
 
-  bindsym $mod+h focus left
-  bindsym $mod+j focus down
-  bindsym $mod+k focus up
-  bindsym $mod+l focus right
-  bindsym Mod1+Tab focus right
-  bindsym Mod1+Shift+Tab focus left
-  bindsym $mod+Left focus left
-  bindsym $mod+Down focus down
-  bindsym $mod+Up focus up
-  bindsym $mod+Right focus right
+bindsym $mod+h focus left
+bindsym $mod+j focus down
+bindsym $mod+k focus up
+bindsym $mod+l focus right
+bindsym Mod1+Tab focus right
+bindsym Mod1+Shift+Tab focus left
+bindsym $mod+Left focus left
+bindsym $mod+Down focus down
+bindsym $mod+Up focus up
+bindsym $mod+Right focus right
 
-  bindsym $mod+m sticky toggle
+bindsym $mod+m sticky toggle
 	  
-  bindsym $mod+Shift+h move left
-  bindsym $mod+Shift+j move down
-  bindsym $mod+Shift+k move up
-  bindsym $mod+Shift+l move right
+bindsym $mod+Shift+h move left
+bindsym $mod+Shift+j move down
+bindsym $mod+Shift+k move up
+bindsym $mod+Shift+l move right
 
-  bindsym $mod+Tab move right
-  bindsym $mod+Shift+Tab move left
+bindsym $mod+Tab move right
+bindsym $mod+Shift+Tab move left
 
-  bindsym $mod+Shift+Left move left
-  bindsym $mod+Shift+Down move down
-  bindsym $mod+Shift+Up move up
-  bindsym $mod+Shift+Right move right
+bindsym $mod+Shift+Left move left
+bindsym $mod+Shift+Down move down
+bindsym $mod+Shift+Up move up
+bindsym $mod+Shift+Right move right
 
-  bindsym $mod+Control+h resize shrink width 2 px or 2 ppt
-  bindsym $mod+Control+j resize grow height 2 px or 2 ppt
-  bindsym $mod+Control+k resize shrink height 2 px or 2 ppt
-  bindsym $mod+Control+l resize grow width 2 px or 2 ppt
+bindsym $mod+Control+h resize shrink width 2 px or 2 ppt
+bindsym $mod+Control+j resize grow height 2 px or 2 ppt
+bindsym $mod+Control+k resize shrink height 2 px or 2 ppt
+bindsym $mod+Control+l resize grow width 2 px or 2 ppt
 
-  bindsym $mod+v split h
+bindsym $mod+v split h
 
-  bindsym $mod+c split v
+bindsym $mod+c split v
 
-  bindsym $mod+s split toggle
+bindsym $mod+s split toggle
 
-  bindsym $mod+f fullscreen toggle
+bindsym $mod+f fullscreen toggle
 
-  bindsym $mod+Shift+s layout stacking
-  bindsym $mod+w layout tabbed
-  bindsym $mod+y layout toggle split
+bindsym $mod+Shift+s layout stacking
+bindsym $mod+w layout tabbed
+bindsym $mod+y layout toggle split
 
-  bindsym $mod+Shift+space floating toggle
+bindsym $mod+Shift+space floating toggle
 
-  bindsym $mod+space focus mode_toggle
+bindsym $mod+space focus mode_toggle
 
-  bindsym $mod+Shift+x focus parent
+bindsym $mod+Shift+x focus parent
 
-  bindsym $mod+x focus child
+bindsym $mod+x focus child
 
 set $ws1 "1:λ"
 set $ws2 "2:α"
@@ -144,44 +144,44 @@ bindcode $mod+Shift+17 move container to workspace $ws8
 bindcode $mod+Shift+18 move container to workspace $ws9
 bindcode $mod+Shift+19 move container to workspace $ws10
 
-  bindsym $mod+Shift+r reload
-  # restart sway inplace (preserves your layout/session, can be used to upgrade sway)
-    # leftover from i3, not supported by sway!
-    # bindsym $mod+Control+r restart
-  # exit sway (logs you out of your Wayland session)
-  bindsym $mod+Shift+e exec "swaynag -t warning -m 'You pressed the exit shortcut. Do you really want to exit sway? This will end your Wayland session.' -B 'Yes, exit sway' 'swaymsg exit'"
+bindsym $mod+Shift+r reload
+# restart sway inplace (preserves your layout/session, can be used to upgrade sway)
+  # leftover from i3, not supported by sway!
+  # bindsym $mod+Control+r restart
+# exit sway (logs you out of your Wayland session)
+bindsym $mod+Shift+e exec "swaynag -t warning -m 'You pressed the exit shortcut. Do you really want to exit sway? This will end your Wayland session.' -B 'Yes, exit sway' 'swaymsg exit'"
 
-  set $bg-color 	   #b19cd8
-  set $active-border-color #FFFFFF
-  set $inactive-bg-color   #2E3440
-  set $text-color          #f5f5f5
-  set $inactive-text-color #d8dee9
-  set $urgent-bg-color     #A7C7E7
+set $bg-color 	   #b19cd8
+set $active-border-color #FFFFFF
+set $inactive-bg-color   #2E3440
+set $text-color          #f5f5f5
+set $inactive-text-color #d8dee9
+set $urgent-bg-color     #A7C7E7
 
-  client.focused          $bg-color           $bg-color          $inactive-bg-color          $active-border-color
-  # nice transparent borders for unfocused windows :3		  
-  client.unfocused        $inactive-bg-color  $inactive-bg-color  $inactive-text-color $inactive-bg-color #00000000
-  client.focused_inactive $inactive-bg-color $inactive-bg-color $inactive-text-color $inactive-bg-color
-  client.urgent           $urgent-bg-color    $urgent-bg-color   $text-color          $urgent-bg-color
+client.focused          $bg-color           $bg-color          $inactive-bg-color          $active-border-color
+# nice transparent borders for unfocused windows :3		  
+client.unfocused        $inactive-bg-color  $inactive-bg-color  $inactive-text-color $inactive-bg-color #00000000
+client.focused_inactive $inactive-bg-color $inactive-bg-color $inactive-text-color $inactive-bg-color
+client.urgent           $urgent-bg-color    $urgent-bg-color   $text-color          $urgent-bg-color
 
 
-  client.background       #2B2C2B
+client.background       #2B2C2B
 
-  bar {
-  #strip_workspace_numbers yes
-  position top
-  mode dock
-  status_padding 4
-  tray_padding 4
+bar {
+#strip_workspace_numbers yes
+position top
+mode dock
+status_padding 4
+tray_padding 4
 
-  status_command i3status | ~/.config/sway/i3status_wrapper.py
+status_command i3status | ~/.config/sway/i3status_wrapper.py
 
-  colors {
-  background $inactive-bg-color
-  separator $inactive-bg-color
-  #                  border             background         text
-  focused_workspace  $bg-color          $bg-color          $inactive-bg-color
-  inactive_workspace $inactive-bg-color $inactive-bg-color $inactive-text-color
-  urgent_workspace   $urgent-bg-color   $urgent-bg-color   $inactive-bg-color
-  }
-  }
+colors {
+background $inactive-bg-color
+separator $inactive-bg-color
+#                  border             background         text
+focused_workspace  $bg-color          $bg-color          $inactive-bg-color
+inactive_workspace $inactive-bg-color $inactive-bg-color $inactive-text-color
+urgent_workspace   $urgent-bg-color   $urgent-bg-color   $inactive-bg-color
+}
+}

@@ -2017,7 +2017,7 @@ their specifics). What I have here is a macro which I can then use to
 wrap any code that should only be evaluated when I am not in one of my
 tiling window managers.
 
-#+begin_src emacs-lisp :tangle early-init.el
+#+begin_src emacs-lisp :tangle "~/git/emacs-stuff/configs/emacs/.emacs.d/early-init.el"
 (defvar my-emacs-tiling-window-manager-regexp "bspwm\\|herbstluftwm\\|i3"
   "Regular expression to  tiling window managers.
 See definition of `my-emacs-with-desktop-session'.")
@@ -2069,7 +2069,7 @@ toolkit. In short, I want to keep things minimal. Notice the
 default Emacs will resize the frame if you adjust the font size, which
 I never want.
 
-#+begin_src emacs-lisp :tangle early-init.el
+#+begin_src emacs-lisp :tangle "~/git/emacs-stuff/configs/emacs/.emacs.d/early-init.el"
 (setq frame-resize-pixelwise t
       frame-inhibit-implied-resize t
       frame-title-format '("%b")
@@ -13030,7 +13030,7 @@ files. The user must handle this step by invoking the command
 
 I use Emacs a lot to read books
 
-#+begin_src emacs-lisp :tangle my-emacs-modules/my-emacs-pdf.el
+#+begin_src emacs-lisp :tangle "~/git/emacs-stuff/configs/emacs/.emacs.d/my-emacs-modules/my-emacs-pdf.el"
 (use-package pdf-tools
   :ensure t
   :config
@@ -13043,7 +13043,7 @@ I use Emacs a lot to read books
 
 *** The =my-emacs-gptel.el= module
 
-#+begin_src emacs-lisp :tangle my-emacs-modules/my-emacs-gptel.el
+#+begin_src emacs-lisp :tangle "~/git/emacs-stuff/configs/emacs/.emacs.d/my-emacs-modules/my-emacs-gptel.el"
 (use-package gptel
   :ensure t
   :config

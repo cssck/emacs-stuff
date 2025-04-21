@@ -49,86 +49,86 @@
   ;; Use absolute numbers in narrowed buffers
   (setq-default display-line-numbers-widen t))
 
-  ;;;; `window', `display-buffer-alist', and related
-  (use-package my-window
-    :ensure nil
-    :demand t
-    :config
-    ;; NOTE 2023-03-17: Remember that I am using development versions of
-    ;; Emacs.  Some of my `display-buffer-alist' contents are for Emacs
-    ;; 29+.
-    (setq display-buffer-alist
-          `(;; no window
-            ("\\`\\*Async Shell Command\\*\\'"
-             (display-buffer-no-window))
-            ("\\`\\*\\(Warnings\\|Compile-Log\\|Org Links\\)\\*\\'"
-             (display-buffer-no-window)
-             (allow-no-window . t))
-            ;; bottom side window
-            ("\\*\\(Org \\(Select\\|Note\\)\\|Agenda Commands\\)\\*" ; the `org-capture' key selection and `org-add-log-note'
-             (display-buffer-in-side-window)
-             (dedicated . t)
-             (side . bottom)
-             (slot . 0)
-             (window-parameters . ((mode-line-format . none))))
-            ;; bottom buffer (NOT side window)
-            ((or . ((derived-mode . flymake-diagnostics-buffer-mode)
-                    (derived-mode . flymake-project-diagnostics-mode)
-                    (derived-mode . messages-buffer-mode)
-                    (derived-mode . backtrace-mode)))
-             (display-buffer-reuse-mode-window display-buffer-at-bottom)
-             (window-height . 0.3)
-             (dedicated . t)
-             (preserve-size . (t . t))
-             (body-function . select-window))
-            ("\\*Embark Actions\\*"
-             (display-buffer-reuse-mode-window display-buffer-below-selected)
-             (window-height . fit-window-to-buffer)
-             (window-parameters . ((no-other-window . t)
-                                   (mode-line-format . none))))
-            ("\\*\\(Output\\|Register Preview\\).*"
-             (display-buffer-reuse-mode-window display-buffer-at-bottom))
-            ;; below current window
-            ("\\(\\*Capture\\*\\|CAPTURE-.*\\)"
-             (display-buffer-reuse-mode-window display-buffer-below-selected))
-            ((derived-mode . reb-mode) ; M-x re-builder
-             (display-buffer-reuse-mode-window display-buffer-below-selected)
-             (window-height . 4) ; note this is literal lines, not relative
-             (dedicated . t)
-             (preserve-size . (t . t)))
-            ((or . ((derived-mode . occur-mode)
-                    (derived-mode . grep-mode)
-                    (derived-mode . Buffer-menu-mode)
-                    (derived-mode . log-view-mode)
-                    (derived-mode . help-mode) ; See the hooks for `visual-line-mode'
-                    "\\*\\(|Buffer List\\|Occur\\|vc-change-log\\|eldoc.*\\).*"
-                    "\\*\\vc-\\(incoming\\|outgoing\\|git : \\).*"
-                    my-window-shell-or-term-p
-                    ;; ,world-clock-buffer-name
-                    ))
-             (my-window-display-buffer-below-or-pop)
-             (body-function . my-window-select-fit-size))
-            ("\\*\\(Calendar\\|Bookmark Annotation\\|ert\\).*"
-             (display-buffer-reuse-mode-window display-buffer-below-selected)
-             (dedicated . t)
-             (window-height . fit-window-to-buffer))
-            ;; NOTE 2022-09-10: The following is for `ispell-word', though
-            ;; it only works because I override `ispell-display-buffer'
-            ;; with `my-spell-ispell-display-buffer' and change the
-            ;; value of `ispell-choices-buffer'.
-            ("\\*ispell-top-choices\\*.*"
-             (display-buffer-reuse-mode-window display-buffer-below-selected)
-             (window-height . fit-window-to-buffer))
-            ;; same window
+;;;; `window', `display-buffer-alist', and related
+(use-package my-window
+  :ensure nil
+  :demand t
+  :config
+  ;; NOTE 2023-03-17: Remember that I am using development versions of
+  ;; Emacs.  Some of my `display-buffer-alist' contents are for Emacs
+  ;; 29+.
+  (setq display-buffer-alist
+        `(;; no window
+          ("\\`\\*Async Shell Command\\*\\'"
+           (display-buffer-no-window))
+          ("\\`\\*\\(Warnings\\|Compile-Log\\|Org Links\\)\\*\\'"
+           (display-buffer-no-window)
+           (allow-no-window . t))
+          ;; bottom side window
+          ("\\*\\(Org \\(Select\\|Note\\)\\|Agenda Commands\\)\\*" ; the `org-capture' key selection and `org-add-log-note'
+           (display-buffer-in-side-window)
+           (dedicated . t)
+           (side . bottom)
+           (slot . 0)
+           (window-parameters . ((mode-line-format . none))))
+          ;; bottom buffer (NOT side window)
+          ((or . ((derived-mode . flymake-diagnostics-buffer-mode)
+                  (derived-mode . flymake-project-diagnostics-mode)
+                  (derived-mode . messages-buffer-mode)
+                  (derived-mode . backtrace-mode)))
+           (display-buffer-reuse-mode-window display-buffer-at-bottom)
+           (window-height . 0.3)
+           (dedicated . t)
+           (preserve-size . (t . t))
+           (body-function . select-window))
+          ("\\*Embark Actions\\*"
+           (display-buffer-reuse-mode-window display-buffer-below-selected)
+           (window-height . fit-window-to-buffer)
+           (window-parameters . ((no-other-window . t)
+                                 (mode-line-format . none))))
+          ("\\*\\(Output\\|Register Preview\\).*"
+           (display-buffer-reuse-mode-window display-buffer-at-bottom))
+          ;; below current window
+          ("\\(\\*Capture\\*\\|CAPTURE-.*\\)"
+           (display-buffer-reuse-mode-window display-buffer-below-selected))
+          ((derived-mode . reb-mode) ; M-x re-builder
+           (display-buffer-reuse-mode-window display-buffer-below-selected)
+           (window-height . 4) ; note this is literal lines, not relative
+           (dedicated . t)
+           (preserve-size . (t . t)))
+          ((or . ((derived-mode . occur-mode)
+                  (derived-mode . grep-mode)
+                  (derived-mode . Buffer-menu-mode)
+                  (derived-mode . log-view-mode)
+                  (derived-mode . help-mode) ; See the hooks for `visual-line-mode'
+                  "\\*\\(|Buffer List\\|Occur\\|vc-change-log\\|eldoc.*\\).*"
+                  "\\*\\vc-\\(incoming\\|outgoing\\|git : \\).*"
+                  my-window-shell-or-term-p
+                  ;; ,world-clock-buffer-name
+                  ))
+           (my-window-display-buffer-below-or-pop)
+           (body-function . my-window-select-fit-size))
+          ("\\*\\(Calendar\\|Bookmark Annotation\\|ert\\).*"
+           (display-buffer-reuse-mode-window display-buffer-below-selected)
+           (dedicated . t)
+           (window-height . fit-window-to-buffer))
+          ;; NOTE 2022-09-10: The following is for `ispell-word', though
+          ;; it only works because I override `ispell-display-buffer'
+          ;; with `my-spell-ispell-display-buffer' and change the
+          ;; value of `ispell-choices-buffer'.
+          ("\\*ispell-top-choices\\*.*"
+           (display-buffer-reuse-mode-window display-buffer-below-selected)
+           (window-height . fit-window-to-buffer))
+          ;; same window
 
-            ;; NOTE 2023-02-17: `man' does not fully obey the
-            ;; `display-buffer-alist'.  It works for new frames and for
-            ;; `display-buffer-below-selected', but otherwise is
-            ;; unpredictable.  See `Man-notify-method'.
-            ((or . ((derived-mode . Man-mode)
-                    (derived-mode . woman-mode)
-                    "\\*\\(Man\\|woman\\).*"))
-             (display-buffer-same-window)))))
+          ;; NOTE 2023-02-17: `man' does not fully obey the
+          ;; `display-buffer-alist'.  It works for new frames and for
+          ;; `display-buffer-below-selected', but otherwise is
+          ;; unpredictable.  See `Man-notify-method'.
+          ((or . ((derived-mode . Man-mode)
+                  (derived-mode . woman-mode)
+                  "\\*\\(Man\\|woman\\).*"))
+           (display-buffer-same-window)))))
 
 (use-package my-window
   :ensure nil
@@ -178,31 +178,31 @@
     (">" . enlarge-window-horizontally)
     ("<" . shrink-window-horizontally)))
 
-  ;;; Frame-isolated buffers
-  ;; Another package of mine.  Read the manual:
-  ;; <https://protesilaos.com/emacs/beframe>.
-  (use-package beframe
-    :ensure t
-    :hook (after-init . beframe-mode)
-    :config
-    (setq beframe-functions-in-frames '(project-prompt-project-dir))
+;;; Frame-isolated buffers
+;; Another package of mine.  Read the manual:
+;; <https://protesilaos.com/emacs/beframe>.
+(use-package beframe
+  :ensure t
+  :hook (after-init . beframe-mode)
+  :config
+  (setq beframe-functions-in-frames '(project-prompt-project-dir))
 
-    ;; I use this instead of :bind because I am binding a keymap and the
-    ;; way `use-package' does it is by wrapping a lambda around it that
-    ;; then breaks `describe-key' for those keys.
-    (my-emacs-keybind global-map
-      ;; Override the `set-fill-column' that I have no use for.
-      "C-x f" #'other-frame-prefix
-      ;; Bind Beframe commands to a prefix key. Notice the -map as I am
-      ;; binding keymap here, not a command.
-      "C-c b" #'beframe-prefix-map
-      ;; Replace the generic `buffer-menu'.  With a prefix argument, this
-      ;; commands prompts for a frame.  Call the `buffer-menu' via M-x if
-      ;; you absolutely need the global list of buffers.
-      "C-x C-b" #'beframe-buffer-menu
-      ;; Not specific to Beframe, but since it renames frames (by means
-      ;; of `beframe-mode') it is appropriate to have this here:
-      "C-x B" #'select-frame-by-name))
+  ;; I use this instead of :bind because I am binding a keymap and the
+  ;; way `use-package' does it is by wrapping a lambda around it that
+  ;; then breaks `describe-key' for those keys.
+  (my-emacs-keybind global-map
+    ;; Override the `set-fill-column' that I have no use for.
+    "C-x f" #'other-frame-prefix
+    ;; Bind Beframe commands to a prefix key. Notice the -map as I am
+    ;; binding keymap here, not a command.
+    "C-c b" #'beframe-prefix-map
+    ;; Replace the generic `buffer-menu'.  With a prefix argument, this
+    ;; commands prompts for a frame.  Call the `buffer-menu' via M-x if
+    ;; you absolutely need the global list of buffers.
+    "C-x C-b" #'beframe-buffer-menu
+    ;; Not specific to Beframe, but since it renames frames (by means
+    ;; of `beframe-mode') it is appropriate to have this here:
+    "C-x B" #'select-frame-by-name))
 
 ;;; Frame history (undelete-frame-mode)
 (use-package frame

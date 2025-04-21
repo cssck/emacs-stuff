@@ -1,19 +1,19 @@
-  (define-module (aprilsnow packages emulators)
-    #:use-module (ice-9 match)
-    #:use-module (guix gexp)
-    #:use-module (guix packages)
-    #:use-module (guix utils)
-    #:use-module (gnu packages)
-    #:use-module (gnu packages gl)
-    #:use-module (gnu packages linux)
-    #:use-module (gnu packages emulators))
+(define-module (aprilsnow packages emulators)
+  #:use-module (ice-9 match)
+  #:use-module (guix gexp)
+  #:use-module (guix packages)
+  #:use-module (guix utils)
+  #:use-module (gnu packages)
+  #:use-module (gnu packages gl)
+  #:use-module (gnu packages linux)
+  #:use-module (gnu packages emulators))
 
-  (define-public retroarch-nonfree
-    (package
-      (inherit retroarch)
-      (name "retroarch-nonfree")
-      (arguments
-       (substitute-keyword-arguments (package-arguments retroarch)
+(define-public retroarch-nonfree
+  (package
+    (inherit retroarch)
+    (name "retroarch-nonfree")
+    (arguments
+     (substitute-keyword-arguments (package-arguments retroarch)
 	 ((#:phases phases)
 	  #~(modify-phases #$phases
 	      (replace 'configure

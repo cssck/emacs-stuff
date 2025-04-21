@@ -1,6 +1,6 @@
-  (defvar use-exwm nil)
+(defvar use-exwm nil)
 
-  (when use-exwm (load "~/.exwm.el"))
+(when use-exwm (load "~/.exwm.el"))
 
 ;; For those who use my dotfiles and need an easy way to write their
 ;; own extras on top of what I already load: search below for the files
@@ -319,40 +319,40 @@ making an abbreviation to a function."
 
 (font-lock-add-keywords 'emacs-lisp-mode my-emacs-font-lock-keywords)
 
-  ;; For those who use my dotfiles and need an easy way to write their
-  ;; own extras on top of what I already load.  The file must exist at
-  ;; ~/.emacs.d/my-emacs-pre-custom.el
-  ;;
-  ;; The purpose of this file is for the user to define their
-  ;; preferences BEFORE loading any of the modules.
-  (load (locate-user-emacs-file "my-emacs-pre-custom.el") :no-error :no-message)
+;; For those who use my dotfiles and need an easy way to write their
+;; own extras on top of what I already load.  The file must exist at
+;; ~/.emacs.d/my-emacs-pre-custom.el
+;;
+;; The purpose of this file is for the user to define their
+;; preferences BEFORE loading any of the modules.
+(load (locate-user-emacs-file "my-emacs-pre-custom.el") :no-error :no-message)
 
-  (require 'my-emacs-theme)
-  (require 'my-emacs-essentials)
-  (require 'my-emacs-modeline)
-  (require 'my-emacs-completion)
-  (require 'my-emacs-search)
-  (require 'my-emacs-dired)
-  (require 'my-emacs-window)
-  (require 'my-emacs-git)
-  (require 'my-emacs-org)
-  (require 'my-emacs-langs)
-  (require 'my-emacs-email)
-  (require 'my-emacs-web)
-  (when my-emacs-load-which-key
-    (require 'my-emacs-which-key))
-  (when my-emacs-load-icons
-    (require 'my-emacs-icons))
-  (require 'my-emacs-pdf)
-  (require 'my-emacs-gptel)
-  (require 'my-functions)  
+(require 'my-emacs-theme)
+(require 'my-emacs-essentials)
+(require 'my-emacs-modeline)
+(require 'my-emacs-completion)
+(require 'my-emacs-search)
+(require 'my-emacs-dired)
+(require 'my-emacs-window)
+(require 'my-emacs-git)
+(require 'my-emacs-org)
+(require 'my-emacs-langs)
+(require 'my-emacs-email)
+(require 'my-emacs-web)
+(when my-emacs-load-which-key
+  (require 'my-emacs-which-key))
+(when my-emacs-load-icons
+  (require 'my-emacs-icons))
+(require 'my-emacs-pdf)
+(require 'my-emacs-gptel)
+(require 'my-functions)  
 
-  ;; For those who use my dotfiles and need an easy way to write their
-  ;; own extras on top of what I already load.  The file must exist at
-  ;; ~/.emacs.d/my-emacs-post-custom.el
-  ;;
-  ;; The purpose of the "post customisations" is to make tweaks to what
-  ;; I already define, such as to change the default theme.  See above
-  ;; for the `my-emacs-pre-custom.el' to make changes BEFORE loading
-  ;; any of my other configurations.
-  (load (locate-user-emacs-file "my-emacs-post-custom.el") :no-error :no-message)
+;; For those who use my dotfiles and need an easy way to write their
+;; own extras on top of what I already load.  The file must exist at
+;; ~/.emacs.d/my-emacs-post-custom.el
+;;
+;; The purpose of the "post customisations" is to make tweaks to what
+;; I already define, such as to change the default theme.  See above
+;; for the `my-emacs-pre-custom.el' to make changes BEFORE loading
+;; any of my other configurations.
+(load (locate-user-emacs-file "my-emacs-post-custom.el") :no-error :no-message)

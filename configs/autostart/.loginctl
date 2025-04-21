@@ -1,22 +1,22 @@
 #!/bin/sh
-  xrdb ~/git/emacs-stuff/configs/X/.Xresources
+xrdb ~/git/emacs-stuff/configs/X/.Xresources
 
-  #syncthing serve --no-browser &
+#syncthing serve --no-browser &
 
-  # $HOME/.local/bin/emacs --daemon &
-  emacs --daemon &
+# $HOME/.local/bin/emacs --daemon &
+emacs --daemon &
 
-  # nm-applet &
-  # xhost +si:localuser:aprilsnow
-  # $HOME/.guix-profile/libexec/xdg-desktop-portal -r &
-  dbus-update-activation-environment --all &
-  # xinput set-prop 'pointer:Logitech G305' 'libinput Accel Profile Enabled' 0 1 &
-  # /usr/bin/gnome-keyring-daemon --start --components=secrets &
-  # playerctld &
+# nm-applet &
+# xhost +si:localuser:aprilsnow
+# $HOME/.guix-profile/libexec/xdg-desktop-portal -r &
+dbus-update-activation-environment --all &
+# xinput set-prop 'pointer:Logitech G305' 'libinput Accel Profile Enabled' 0 1 &
+# /usr/bin/gnome-keyring-daemon --start --components=secrets &
+# playerctld &
 
-  if [ "$HOSTNAME" = "normandy" ]
-     then
+if [ "$HOSTNAME" = "normandy" ]
+   then
 	 setxkbmap -layout "us,ua" -variant "dvorak," -option "grp:win_space_toggle,ctrl:swapcaps" &
 	 xinput set-prop 'pointer:Logitech G102' 'Device Accel Profile' -1 &
 	 # echo "nothing to do!"
-  fi
+fi

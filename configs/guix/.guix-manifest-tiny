@@ -1,5 +1,5 @@
-  (specifications->manifest
-   (list "glibc-locales"
+(specifications->manifest
+ (list "glibc-locales"
 	 "gcc"
 	 "syncthing"
 	 "sbcl"
