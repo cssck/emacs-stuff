@@ -15,7 +15,7 @@
   if [ "$HOSTNAME" = "normandy" ] && [ ! -f /run/.containerenv ]
   then
       export LIBVA_DRIVER_NAME=iHD
-      export LD_PRELOAD=/home/aprilsnow/.guix-profile/lib/dri/iHD_drv_video.so
+  #    export LD_PRELOAD=/home/aprilsnow/.guix-profile/lib/dri/iHD_drv_video.so
       export MOZ_USE_XINPUT2=1
   fi
 
